@@ -67,10 +67,10 @@ def findFib(n: int) -> int:
 
 
 def findSol(n: int) -> int:
-    arr = [0, 1, 1, 2] + [0] * (n - 3)
-    for i in range(4, n + 1):
-        arr[i] = arr[i - 1] + arr[i - 2] + arr[i - 3]
-    return arr[n]
+    count_arr = [0, 1, 1] + [0] * (n - 2)
+    for i in range(3, n + 1):
+        count_arr[i] = count_arr[i - 1] + count_arr[i - 2] + count_arr[i - 3]
+    return count_arr[n]
 
 
 def findWays(n: int, allowed_arr: list[bool]) -> int:
@@ -84,7 +84,7 @@ def findWays(n: int, allowed_arr: list[bool]) -> int:
 def countMinCost(n: int, prices_arr: list[int]):
     costs_arr = [float("inf"), prices_arr[1], prices_arr[1] + prices_arr[2]] + [0] * (n - 2)
     for i in range(3, n + 1):
-        costs_arr[i] = prices_arr[i] + min(prices_arr[i - 1], prices_arr[i - 2])
+        costs_arr[i] = prices_arr[i] + min(costs_arr[i - 1], costs_arr[i - 2])
     return costs_arr[n]
 
 

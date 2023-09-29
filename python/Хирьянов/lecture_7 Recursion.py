@@ -1,4 +1,4 @@
-import graphics as gr
+import graphics
 import time
 
 
@@ -12,10 +12,10 @@ def matreshka(n):
         print(f"Низ матрешки: {n}")
 
 
-window = gr.GraphWin("Fractal rectangle", 600, 600)
+window = graphics.GraphWin("Fractal rectangle", 800, 800)
 
 
-def fractal(A, B, C, D, alpha = 0.1, deep = 10):
+def fractal(A, B, C, D, alpha = 0.1, deep = 90):
     if deep == 0:
         return
     new_fractal = []
@@ -25,7 +25,7 @@ def fractal(A, B, C, D, alpha = 0.1, deep = 10):
     fractal(*new_fractal, alpha, deep - 1)
 
 
-fractal((100, 100), (500, 100), (500, 500), (100, 500))
+fractal((100, 100), (700, 100), (700, 700), (100, 700))
 
 
 def factorize(n: int):
@@ -59,3 +59,4 @@ def fastPow(num: float, pow: int):
 start = time.time_ns()
 print(fastPow(2, 10))
 print(time.time_ns() - start)
+input()

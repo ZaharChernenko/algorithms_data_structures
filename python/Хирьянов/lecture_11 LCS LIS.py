@@ -7,6 +7,8 @@ def findWaysNum(n: int, m: int) -> int:
 
 
 def matrixLCS(a, b):
+    """Этот алгоритм позволяет восстановить исходную последовательность, если же нужно лишь длина, то лучше
+    использовать lenLCS"""
     matrix = [[0] * (len(b) + 1) for i in range(len(a) + 1)]
     for i in range(1, len(a) + 1):
         for j in range(1, len(b) + 1):
@@ -32,6 +34,18 @@ def lcs(a, b):
         else:
             hor -= 1
     return res[::-1]
+
+
+def lengthLCS(a, b) -> int:
+    prev_row, current_row = [0] * (len(b) + 1), [0] * (len(b) + 1)
+    for i in range(1, len(a) + 1):
+        for j in range(1, len(b) + 1):
+            if a[i - 1] == b[j - 1]:
+                current_row[j] = 1 + prev_row[j - 1]
+            else:
+                current_row[j] = max(current_row[j - 1], prev_row[j])
+        prev_row, current_row = current_row, [0] * (len(b) + 1)
+    return prev_row[-1]
 
 
 def lis(seq) -> int:

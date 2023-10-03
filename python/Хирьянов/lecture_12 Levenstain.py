@@ -9,17 +9,18 @@ def levenstain(a, b):
     return matrix[-1][-1]
 
 
-def pifunction(a: str):
-    if len(a)<=1:
+def piF(a: str):
+    if len(a) <= 1:
         return 0
-    arr = [0 for i in range(len(a))]
+    pi_f_arr = [0 for _ in range(len(a))]
     for i in range(1, len(a)):
-        p = arr[i-1]
-        while p > 0 and a[i] != a[p]:
-            p = arr[p-1]
-        if a[i] == a[p]:
-            p += 1
-        arr[i] = p
-    return arr[-1]
+        prev_pi_f = pi_f_arr[i - 1]
+        while prev_pi_f > 0 and a[i] != a[prev_pi_f]:
+            prev_pi_f = pi_f_arr[prev_pi_f - 1]
+        if a[i] == a[prev_pi_f]:
+            prev_pi_f += 1
+        pi_f_arr[i] = prev_pi_f
+    return pi_f_arr[-1]
 
-print(pifunction("abazxcaba" ))
+
+print(piF("abcdabcabcdabcdab"))

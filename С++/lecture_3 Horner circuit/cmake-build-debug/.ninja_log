@@ -1,0 +1,22 @@
+# ninja log v5
+289	316	1697058600473289869	lecture_3_Horner_circuit	3f690e6414d874d
+1	289	1697058600444736904	CMakeFiles/lecture_3_Horner_circuit.dir/main.cpp.o	17772c58b7b34418
+0	62	1697058633185359093	build.ninja	84a0f41efea2bcde
+2	537	1697059068082564649	CMakeFiles/lecture_3_Horner_circuit.dir/main.cpp.o	17772c58b7b34418
+538	630	1697059068175608068	lecture_3_Horner_circuit	3f690e6414d874d
+2	305	1697059193306719145	CMakeFiles/lecture_3_Horner_circuit.dir/main.cpp.o	17772c58b7b34418
+305	339	1697059193340920815	lecture_3_Horner_circuit	3f690e6414d874d
+1	298	1697059198927452343	CMakeFiles/lecture_3_Horner_circuit.dir/main.cpp.o	17772c58b7b34418
+298	327	1697059198957451491	lecture_3_Horner_circuit	3f690e6414d874d
+1	293	1697059207911310932	CMakeFiles/lecture_3_Horner_circuit.dir/main.cpp.o	17772c58b7b34418
+294	324	1697059207943384936	lecture_3_Horner_circuit	3f690e6414d874d
+1	348	1697059364510449775	CMakeFiles/lecture_3_Horner_circuit.dir/main.cpp.o	17772c58b7b34418
+348	441	1697059364603102487	lecture_3_Horner_circuit	3f690e6414d874d
+1	544	1697060148832036611	CMakeFiles/lecture_3_Horner_circuit.dir/main.cpp.o	17772c58b7b34418
+545	577	1697060148865866935	lecture_3_Horner_circuit	3f690e6414d874d
+2	530	1697060976490675142	CMakeFiles/lecture_3_Horner_circuit.dir/main.cpp.o	17772c58b7b34418
+530	624	1697060976585287134	lecture_3_Horner_circuit	3f690e6414d874d
+2	284	1697060981327741613	CMakeFiles/lecture_3_Horner_circuit.dir/main.cpp.o	17772c58b7b34418
+284	312	1697060981358293952	lecture_3_Horner_circuit	3f690e6414d874d
+2	297	1697060984099240156	CMakeFiles/lecture_3_Horner_circuit.dir/main.cpp.o	17772c58b7b34418
+297	325	1697060984129075563	lecture_3_Horner_circuit	3f690e6414d874d

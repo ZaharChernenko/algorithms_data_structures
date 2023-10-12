@@ -1,21 +1,17 @@
 def convertToAnotherNumberSystem(num: str, num_base: int = 10, wanted_base: int = 10):
     if num_base != 10:
-        result = 0
+        num_decimal = 0
         for number in num:
-            result *= num_base
-            result += int(number, base=num_base)
-
+            num_decimal *= num_base
+            num_decimal += int(number, base=num_base)
     else:
-        result = int(num)
+        num_decimal = int(num)
 
-    if wanted_base == 10:
-        return result
-
-    converted_num = []
-    while result > 0:
-        converted_num.append(str(result % wanted_base))
-        result //= wanted_base
-    return "".join(converted_num[::-1])
+    res = []
+    while num_decimal > 0:
+        res.append(str(num_decimal % wanted_base))
+        num_decimal //= wanted_base
+    return "".join(res[::-1])
 
 
 print(convertToAnotherNumberSystem("12", 10, 10))

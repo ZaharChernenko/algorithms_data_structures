@@ -1,0 +1,3 @@
+/Users/zahar/Desktop/algorithms_data_structures/С++/lecture_3 Horner circuit/cmake-build-debug/CMakeFiles/lecture_3_Horner_circuit.dir
+/Users/zahar/Desktop/algorithms_data_structures/С++/lecture_3 Horner circuit/cmake-build-debug/CMakeFiles/edit_cache.dir
+/Users/zahar/Desktop/algorithms_data_structures/С++/lecture_3 Horner circuit/cmake-build-debug/CMakeFiles/rebuild_cache.dir

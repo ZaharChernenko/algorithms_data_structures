@@ -83,7 +83,9 @@
 			"sourceIndexes" : 
 			[
 				0,
-				2
+				2,
+				3,
+				4
 			]
 		},
 		{
@@ -110,6 +112,16 @@
 		{
 			"backtrace" : 1,
 			"path" : "lecture_5.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "lecture_6.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "lecture_7.h",
 			"sourceGroupIndex" : 0
 		}
 	],

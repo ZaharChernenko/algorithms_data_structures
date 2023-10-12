@@ -36,9 +36,33 @@ void printArr(T arr[], int size) {
     cout << '\n';
 }
 
+template <typename T>
+void printBoolArr(T arr[], int size) {
+    for (int i = 0; i < size; ++i) {
+        if (arr[i]) cout << i << '\n';
+    }
+    cout << '\n';
+}
+
 bool isPrime(const int& n) {
     for (int i = 2; i < sqrt(n) + 1; ++i) {
         if (n % i == 0) return false;
     }
     return true;
+}
+
+bool* primesArr(const int& n) {
+    bool* arr = new bool[n];
+    for (int i = 0; i < n; ++i) {
+        arr[i] = true;
+    }
+
+    for (int i = 2; i < n; ++i) {
+        if (arr[i]) {
+            for (int k = 2 * i; k < n; k += i) {
+                arr[k] = false;
+            }
+        }
+    }
+    return arr;
 }

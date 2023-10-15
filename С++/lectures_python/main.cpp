@@ -4,12 +4,12 @@
 #include "lecture_6.h"
 #include "lecture_7.h"
 #include "lecture_8.h"
-#include "lecture_9.h"
+
 #include "lecture_10.h"
 
 using std::cin, std::cout;
 
 int main() {
-    testMap();
+    test10();
     return 0;
 }

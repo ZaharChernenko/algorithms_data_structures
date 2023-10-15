@@ -1,7 +1,5 @@
 #pragma once
 #include <vector>
-#include <unordered_map>
-#include <unordered_set>
 
 using std::cin, std::cout;
 
@@ -34,19 +32,21 @@ int binarySearch(const std::vector<T>& vec, const T& key) {
 
 
 void test10() {
-    std::vector<int> vec{0, 1, 2, 3, 4, 5, 7};
+    std::vector<int> vec {0, 1, 2, 3, 4, 5, 7};
     auto iter = std::lower_bound(vec.begin(), vec.end(), 6);
-    if (iter == vec.end()) cout << -1;
-    else cout << iter - vec.begin();
+    //if (iter == vec.end()) cout << -1;
+    //else cout << iter - vec.begin();
     std::vector<std::string> vec1 {"123", "231"};
     std::sort(vec1.begin(), vec1.end(), comp);
-}
 
-void testMap() {
+    std::vector<int> v1 {123, 3, 123, 2, 1, 4};
+    mergeSort(v1);
 
-    std::unordered_set<int> s{1, 1, 2, 3};
-    s.insert(3);
-    for (auto &i: s) {
-        cout << i << '\t';
+    std::size_t n = v1.size();
+    for (std::size_t i = 0; i < n; ++i){
+        if (i == 2) {
+            v1.pop_back();
+        }
+        cout << v1.at(i) << '\t';
     }
 }

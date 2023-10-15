@@ -45,6 +45,7 @@ class SingleLinkedList:
         else:
             self._head = self._ListNode(val, self._head)
             self._size += 1
+
     def pushBack(self, val):
         if self._size == 0:
             self._head = self._ListNode(val)
@@ -84,9 +85,11 @@ class SingleLinkedList:
         else:
             raise IndexError
 
-lst = SingleLinkedList()
 
+lst = SingleLinkedList()
 
 lst.pushBack(2)
 lst.pushBack(3)
+lst.popBack()
+
 print(lst)

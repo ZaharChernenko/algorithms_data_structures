@@ -7,4 +7,8 @@ add_executable(lecture_3_Horner_circuit lecture_3.h
         main.cpp
         lecture_5.h
         lecture_6.h
-        lecture_7.h)
+        lecture_7.h
+        lecture_8.h
+        lecture_9.h
+        lecture_10.h
+        queue.h)

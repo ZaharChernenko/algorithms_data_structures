@@ -50,6 +50,19 @@ def generatePermutations(length: int, collection, prefix="", arr=None):
     return arr
 
 
+def Dec(arr, i=0, a=None, prefix=None):
+    if i == len(arr):
+        a.append(tuple(prefix))
+        return
+    if a is None:
+        a = []
+    if prefix is None:
+        prefix = []
+    for j in range(len(arr[i])):
+        Dec(arr, i + 1, a, prefix + [arr[i][j]])
+    return a
+
+
 arr = generatePermutations(5, list(range(1, 6)))
 print(arr)
 print(len(arr))

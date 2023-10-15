@@ -89,7 +89,4 @@ lst = SingleLinkedList()
 
 lst.pushBack(2)
 lst.pushBack(3)
-lst.pushFront(99)
 print(lst)
-lst[-3] = 100
-print(lst[-3])

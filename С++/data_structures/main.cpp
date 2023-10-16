@@ -5,12 +5,13 @@
 using std::cin, std::cout;
 
 int main() {
-    std::cout << "Hello, World!" << std::endl;
-    Queue<int> q{2, 3, 4, 5, 6};
-    q.pushFront(11);
-
+    Queue<int> q{2};
+    cout << 1 << ' ' << q.popFront() << '\n';
+    cout << 1 << ' ' << q.popFront() << '\n';
     cout << q << '\t' << q.size() << '\n';
-    std::vector<int> v;
-    v.pop_back();
+
+    int* arr = new int[10];
+    delete[] arr;
+    arr = new int[20];
     return 0;
 }

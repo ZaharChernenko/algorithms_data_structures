@@ -1,6 +1,28 @@
 #pragma once
 #include <iostream>
+#include <exception>
+#include <unordered_map>
+#include <string>
 
+
+using std::cin, std::cout;
+
+enum QueueErrors {
+    POP_FROM_EMPTY_QUEUE = 1,
+    QUEUE_INDEX_OUT_OF_RANGE = 2
+};
+
+class QueueException: public std::exception {
+private:
+    std::unordered_map<QueueErrors, char*> errors_map {{POP_FROM_EMPTY_QUEUE, "\nPop from empty queue\n"},
+                                                             {QUEUE_INDEX_OUT_OF_RANGE, "\nQueue index out of range\n"}};
+    char* _msg;
+public:
+    QueueException(QueueErrors e): _msg{errors_map[e]} {};
+    const char* what() const noexcept override{
+        return _msg;
+    }
+};
 
 template <class T>
 class Queue {
@@ -23,7 +45,7 @@ public:
 
     template <class T1> friend std::ostream& operator<<(std::ostream& os, const Queue<T1>& q);
 
-    std::size_t size() const;
+    [[nodiscard]] std::size_t size() const;
 
     void pushFront(const T& val);
     void pushBack(const T& val);
@@ -112,14 +134,20 @@ void Queue<T>::pushBack(const T& val) {
 
 template <class T>
 T Queue<T>::popFront() {
-    try
-    {
+    try {
         if (_head == nullptr) {
-            throw 
-         }
+            throw QueueException(QueueErrors::POP_FROM_EMPTY_QUEUE);
+        }
+        Node* temp = _head;
+        T val = _head->val;
+        _head = _head->next;
+        delete temp;
+        --_size;
+        if (_size == 0) _tail = _head;
+        return val;
     }
-    catch (const std::exception&)
-    {
-
+    catch (const QueueException& e) {
+        std::cerr << e.what();
+        exit(QueueErrors::POP_FROM_EMPTY_QUEUE);
     }
 }

@@ -14,7 +14,7 @@ enum QueueErrors {
 
 class QueueException: public std::exception {
 private:
-    std::unordered_map<QueueErrors, char*> errors_map {{POP_FROM_EMPTY_QUEUE, "\nPop from empty queue\n"},
+    std::unordered_map<QueueErrors, char*> errors_map{{POP_FROM_EMPTY_QUEUE, "\nPop from empty queue\n"},
                                                              {QUEUE_INDEX_OUT_OF_RANGE, "\nQueue index out of range\n"}};
     char* _msg;
 public:

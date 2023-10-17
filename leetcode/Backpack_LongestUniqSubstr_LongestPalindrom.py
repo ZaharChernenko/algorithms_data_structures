@@ -14,8 +14,8 @@ def backpack(l: list):
 print(backpack([(1000, 1), (2000, 2), (1500, 1), (2000, 2), (5000, 8)]))
 
 
-#
-def lengthOfLongestSubstring(s: str) -> int:
+# это решение почему-то быстрее чем эталонное
+def lengthOfLongestSubstring1(s: str) -> int:
     m = 0
     res = ""
     for elem in s:
@@ -29,15 +29,35 @@ def lengthOfLongestSubstring(s: str) -> int:
     return m
 
 
+# эталонное вот
+def lengthOfLongestSubstring2(s: str) -> int:
+    left = m = 0
+    uniq = set()
+    for elem in s:
+        if elem in uniq:
+            m = max(len(uniq), m)
+            while elem in uniq:
+                uniq.remove(s[left])
+                left += 1
+        uniq.add(elem)
+    m = max(len(uniq), m)
+    return m
+
+
 def longestPalindrome(s: str) -> str:
-    for i in range(len(s), 0, -1):
-        if i % 2 == 0:
-            print(s[i:i // 2 - 1:-1])
-            if s[:i // 2] == s[i:i // 2 - 1:-1]:
-                return s[:i]
-        else:
-            if s[:i // 2] == s[i:i // 2:-1]:
-                return s[:i]
+    if s == s[::-1]: return s
+
+    start, size = 0, 1
+    for i in range(1, len(s)):
+        l, r = i - size, i + 1
+        s1, s2 = s[l - 1:r], s[l:r]
+
+        if l - 1 >= 0 and s1 == s1[::-1]:
+            start, size = l - 1, size + 2
+        elif s2 == s2[::-1]:
+            start, size = l, size + 1
+
+    return s[start:start + size]
 
 
-longestPalindrome("cbbd")
+print(longestPalindrome("daacaad"))

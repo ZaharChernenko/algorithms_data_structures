@@ -1,4 +1,4 @@
-class Queue_:
+class MyQueue:
     class __Node:
         def __init__(self, val=None, next=None):
             self.val = val

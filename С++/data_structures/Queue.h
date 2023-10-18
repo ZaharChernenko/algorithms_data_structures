@@ -18,7 +18,7 @@ private:
     char* _msg;
 public:
     QueueException(QueueErrors e): _msg{errors_map[e]} {};
-    [[nodiscard]] const char* what() const noexcept override{
+    [[nodiscard]] const char* what() const noexcept override {
         return _msg;
     }
 };
@@ -33,8 +33,8 @@ private:
         Node(const T& val={}, Node* next={nullptr});
     };
 
-    Node* _head;
-    Node* _tail;
+    Node* _front;
+    Node* _back;
     std::size_t _size;
 
 public:
@@ -63,14 +63,14 @@ Queue<T>::Node::Node(const T& val, Node* next):
 
 template <class T>
 Queue<T>::Queue():
-    _head{nullptr}, _tail{nullptr}, _size{0} {
+    _front{nullptr}, _back{nullptr}, _size{0} {
     std::cout << "Default constructor was used\n";
 }
 
 
 template <class T>
 Queue<T>::Queue(std::initializer_list<T> args):
-    _head{new Node(*args.begin())}, _tail{_head}, _size{1} {
+    _front{new Node(*args.begin())}, _back{_front}, _size{1} {
     for (auto i = args.begin() + 1; i != args.end(); ++i) {
         this->pushBack(*i);
     }
@@ -80,13 +80,13 @@ Queue<T>::Queue(std::initializer_list<T> args):
 
 template <class T>
 Queue<T>::~Queue() {
-    Node* temp = _head;
-    while (_head != nullptr) {
-        _head = _head->next;
+    Node* temp = _front;
+    while (_front != nullptr) {
+        _front = _front->next;
         delete temp;
-        temp = _head;
+        temp = _front;
     }
-    _tail = nullptr;
+    _back = nullptr;
     std::cout << "Destructor was called\n";
 }
 
@@ -95,7 +95,7 @@ template <class T>
 T& Queue<T>::operator[](const std::size_t& index) {
     try {
         if (index > _size - 1) throw QueueException(QueueErrors::QUEUE_INDEX_OUT_OF_RANGE);
-        Node* temp = _head;
+        Node* temp = _front;
         for (std::size_t i = 0; i < index; ++i) {
             temp = temp->next;
         }
@@ -111,7 +111,7 @@ T& Queue<T>::operator[](const std::size_t& index) {
 template <class T1>
 std::ostream& operator<<(std::ostream& os, const Queue<T1>& q) {
     os << '[';
-    auto temp = q._head;
+    auto temp = q._front;
     while (true) {
         os << temp->val;
         temp = temp->next;
@@ -130,12 +130,12 @@ std::size_t Queue<T>::size() const {
 
 template <class T>
 void Queue<T>::pushFront(const T& val) {
-    if (_head == nullptr) {
-        _tail = _head = new Node(val);
+    if (_front == nullptr) {
+        _back = _front = new Node(val);
         ++_size;
     }
     else {
-        _head = new Node(val, _head);
+        _front = new Node(val, _front);
         ++_size;
     }
 }
@@ -143,13 +143,13 @@ void Queue<T>::pushFront(const T& val) {
 
 template <class T>
 void Queue<T>::pushBack(const T& val) {
-    if (_head == nullptr) {
-        _tail = _head = new Node(val);
+    if (_front == nullptr) {
+        _back = _front = new Node(val);
         ++_size;
     }
     else {
-        _tail->next = new Node(val);
-        _tail = _tail->next;
+        _back->next = new Node(val);
+        _back = _back->next;
         ++_size;
     }
 }
@@ -158,15 +158,15 @@ void Queue<T>::pushBack(const T& val) {
 template <class T>
 T Queue<T>::popFront() {
     try {
-        if (_head == nullptr) {
+        if (_front == nullptr) {
             throw QueueException(QueueErrors::POP_FROM_EMPTY_QUEUE);
         }
-        Node* temp = _head;
-        T val = _head->val;
-        _head = _head->next;
+        Node* temp = _front;
+        T val = _front->val;
+        _front = _front->next;
         delete temp;
         --_size;
-        if (_size == 0) _tail = _head;
+        if (_size == 0) _back = _front;
         return val;
     }
     catch (const QueueException& e) {
@@ -179,22 +179,22 @@ T Queue<T>::popFront() {
 template <class T>
 T Queue<T>::popBack() {
     try {
-        if (_head == nullptr) {
+        if (_front == nullptr) {
             throw QueueException(QueueErrors::POP_FROM_EMPTY_QUEUE);
         }
-        T val = _tail->val;
+        T val = _back->val;
         --_size;
         if (_size == 0) {
-            delete _tail;
-            _head = _tail = nullptr;
+            delete _back;
+            _front = _back = nullptr;
         }
         else {
-            Node* temp = _tail;
-            _tail = _head;
-            while (_tail->next != temp) {
-                _tail = _tail->next;
+            Node* temp = _back;
+            _back = _front;
+            while (_back->next != temp) {
+                _back = _back->next;
             }
-            _tail->next = nullptr;
+            _back->next = nullptr;
             delete temp;
         }
         return val;
@@ -209,8 +209,8 @@ T Queue<T>::popBack() {
 template <class T>
 T Queue<T>::front() const {
     try {
-        if (_head == nullptr) throw QueueException(QueueErrors::QUEUE_INDEX_OUT_OF_RANGE);
-        return _head->val;
+        if (_front == nullptr) throw QueueException(QueueErrors::QUEUE_INDEX_OUT_OF_RANGE);
+        return _front->val;
     }
     catch (const QueueException e) {
         std::cerr << e.what();
@@ -222,8 +222,8 @@ T Queue<T>::front() const {
 template <class T>
 T Queue<T>::back() const {
     try {
-        if (_head == nullptr) throw QueueException(QueueErrors::QUEUE_INDEX_OUT_OF_RANGE);
-        return _tail->val;
+        if (_front == nullptr) throw QueueException(QueueErrors::QUEUE_INDEX_OUT_OF_RANGE);
+        return _back->val;
     }
     catch (const QueueException e) {
         std::cerr << e.what();

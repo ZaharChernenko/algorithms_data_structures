@@ -5,12 +5,11 @@
 #include <string>
 
 
-using std::cin, std::cout;
-
 enum QueueErrors {
     POP_FROM_EMPTY_QUEUE = 1,
     QUEUE_INDEX_OUT_OF_RANGE = 2
 };
+
 
 class QueueException: public std::exception {
 private:
@@ -19,10 +18,11 @@ private:
     char* _msg;
 public:
     QueueException(QueueErrors e): _msg{errors_map[e]} {};
-    const char* what() const noexcept override{
+    [[nodiscard]] const char* what() const noexcept override{
         return _msg;
     }
 };
+
 
 template <class T>
 class Queue {
@@ -30,9 +30,7 @@ private:
     struct Node {
         T val;
         Node* next;
-        Node();
-        Node(const T& val);
-        Node(const T& val, Node* next);
+        Node(const T& val={}, Node* next={nullptr});
     };
 
     Node* _head;
@@ -42,8 +40,10 @@ private:
 public:
     Queue();
     Queue(std::initializer_list<T> args);
+    ~Queue();
+    T& operator[](const std::size_t&  index);
 
-    template <class T1> friend std::ostream& operator<<(std::ostream& os, const Queue<T1>& q);
+    template<class T1> friend std::ostream& operator<<(std::ostream& os, const Queue<T1>& q);
 
     [[nodiscard]] std::size_t size() const;
 
@@ -51,29 +51,20 @@ public:
     void pushBack(const T& val);
     T popFront();
     T popBack();
-
+    T front() const;
+    T back() const;
 };
 
 
 template <class T>
-Queue<T>::Node::Node():
-        next{nullptr} {}
-
-
-template <class T>
-Queue<T>::Node::Node(const T& val):
-        val{val}, next{nullptr} {}
-
-
-template <class T>
 Queue<T>::Node::Node(const T& val, Node* next):
-    val{ val }, next{ next } {}
+    val{val}, next{next} {}
 
 
 template <class T>
 Queue<T>::Queue():
     _head{nullptr}, _tail{nullptr}, _size{0} {
-    cout << "Default constructor was used\n";
+    std::cout << "Default constructor was used\n";
 }
 
 
@@ -83,19 +74,51 @@ Queue<T>::Queue(std::initializer_list<T> args):
     for (auto i = args.begin() + 1; i != args.end(); ++i) {
         this->pushBack(*i);
     }
-    cout << "Constructor with args was used\n";
+    std::cout << "Constructor with args was used\n";
+}
+
+
+template <class T>
+Queue<T>::~Queue() {
+    Node* temp = _head;
+    while (_head != nullptr) {
+        _head = _head->next;
+        delete temp;
+        temp = _head;
+    }
+    _tail = nullptr;
+    std::cout << "Destructor was called\n";
+}
+
+
+template <class T>
+T& Queue<T>::operator[](const std::size_t& index) {
+    try {
+        if (index > _size - 1) throw QueueException(QueueErrors::QUEUE_INDEX_OUT_OF_RANGE);
+        Node* temp = _head;
+        for (std::size_t i = 0; i < index; ++i) {
+            temp = temp->next;
+        }
+        return temp->val;
+    }
+    catch (const QueueException e) {
+        std::cerr << e.what();
+        exit(QueueErrors::QUEUE_INDEX_OUT_OF_RANGE);
+    }
 }
 
 
 template <class T1>
 std::ostream& operator<<(std::ostream& os, const Queue<T1>& q) {
+    os << '[';
     auto temp = q._head;
-    for (std::size_t i = 0; i < q.size(); ++i) {
+    while (true) {
         os << temp->val;
         temp = temp->next;
-        if (i != q.size() - 1) os << ' ';
+        if (temp == nullptr) break;
+        os << ", ";
     }
-    return os;
+    return os << ']';
 }
 
 
@@ -149,5 +172,61 @@ T Queue<T>::popFront() {
     catch (const QueueException& e) {
         std::cerr << e.what();
         exit(QueueErrors::POP_FROM_EMPTY_QUEUE);
+    }
+}
+
+
+template <class T>
+T Queue<T>::popBack() {
+    try {
+        if (_head == nullptr) {
+            throw QueueException(QueueErrors::POP_FROM_EMPTY_QUEUE);
+        }
+        T val = _tail->val;
+        --_size;
+        if (_size == 0) {
+            delete _tail;
+            _head = _tail = nullptr;
+        }
+        else {
+            Node* temp = _tail;
+            _tail = _head;
+            while (_tail->next != temp) {
+                _tail = _tail->next;
+            }
+            _tail->next = nullptr;
+            delete temp;
+        }
+        return val;
+    }
+    catch (const QueueException& e) {
+        std::cerr << e.what();
+        exit(QueueErrors::POP_FROM_EMPTY_QUEUE);
+    }
+}
+
+
+template <class T>
+T Queue<T>::front() const {
+    try {
+        if (_head == nullptr) throw QueueException(QueueErrors::QUEUE_INDEX_OUT_OF_RANGE);
+        return _head->val;
+    }
+    catch (const QueueException e) {
+        std::cerr << e.what();
+        exit(QueueErrors::QUEUE_INDEX_OUT_OF_RANGE);
+    }
+}
+
+
+template <class T>
+T Queue<T>::back() const {
+    try {
+        if (_head == nullptr) throw QueueException(QueueErrors::QUEUE_INDEX_OUT_OF_RANGE);
+        return _tail->val;
+    }
+    catch (const QueueException e) {
+        std::cerr << e.what();
+        exit(QueueErrors::QUEUE_INDEX_OUT_OF_RANGE);
     }
 }

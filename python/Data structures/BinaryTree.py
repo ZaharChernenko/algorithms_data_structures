@@ -6,7 +6,7 @@ class BinaryTree:
             self.right = None
     def __init__(self, *args):
         if not args:
-            self.__root = self.__Binary_Node()
+            self.__root = None
             self.__size = 0
         else:
             self.__root = self.__Binary_Node(args[0])
@@ -16,25 +16,24 @@ class BinaryTree:
     def __str__(self):
         return str(self.to_list())
 
-    def insert(self, val, root=None, first_step=True) -> None:
-        if first_step:
+    def insert(self, val, root=None) -> None:
+        if root is None:
             root = self.__root
-            if not self.__root.val:
-                self.__root.val = val
+            if self.__root is None:
+                self.__root = self.__Binary_Node(val)
                 return
-            first_step = False
 
         if val < root.val:
             if root.left is None:
                 root.left = self.__Binary_Node(val)
                 return
-            self.insert(val, root.left, first_step)
+            self.insert(val, root.left)
 
         elif val > root.val:
             if root.right is None:
                 root.right = self.__Binary_Node(val)
                 return
-            self.insert(val, root.right, first_step)
+            self.insert(val, root.right)
 
     def to_list(self, root=None, res=None) -> list:
         if root is None:

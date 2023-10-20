@@ -14,7 +14,7 @@ def binarySearch(arr: list, key) -> int:
         else:
             right = middle
 
-    return -1 if right >= len(arr) or arr[right] != key else right
+    return -1 if right == len(arr) or arr[right] != key else right
 
 
 def lowerBound(arr: list, key) -> int:

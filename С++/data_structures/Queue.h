@@ -13,9 +13,9 @@ enum QueueErrors {
 
 class QueueException: public std::exception {
 private:
-    std::unordered_map<QueueErrors, char*> errors_map{{POP_FROM_EMPTY_QUEUE, "\nPop from empty queue\n"},
+    std::unordered_map<QueueErrors, const char*> errors_map{{POP_FROM_EMPTY_QUEUE, "\nPop from empty queue\n"},
                                                              {QUEUE_INDEX_OUT_OF_RANGE, "\nQueue index out of range\n"}};
-    char* _msg;
+    const char* _msg;
 public:
     QueueException(QueueErrors e): _msg{errors_map[e]} {};
     [[nodiscard]] const char* what() const noexcept override {
@@ -93,18 +93,12 @@ Queue<T>::~Queue() {
 
 template <class T>
 T& Queue<T>::operator[](const std::size_t& index) {
-    try {
-        if (index > _size - 1) throw QueueException(QueueErrors::QUEUE_INDEX_OUT_OF_RANGE);
-        Node* temp = _front;
-        for (std::size_t i = 0; i < index; ++i) {
-            temp = temp->next;
-        }
-        return temp->val;
+    if (index > _size - 1) throw QueueException(QueueErrors::QUEUE_INDEX_OUT_OF_RANGE);
+    Node* temp = _front;
+    for (std::size_t i = 0; i < index; ++i) {
+        temp = temp->next;
     }
-    catch (const QueueException e) {
-        std::cerr << e.what();
-        exit(QueueErrors::QUEUE_INDEX_OUT_OF_RANGE);
-    }
+    return temp->val;
 }
 
 
@@ -157,76 +151,54 @@ void Queue<T>::pushBack(const T& val) {
 
 template <class T>
 T Queue<T>::popFront() {
-    try {
-        if (_front == nullptr) {
-            throw QueueException(QueueErrors::POP_FROM_EMPTY_QUEUE);
-        }
-        Node* temp = _front;
-        T val = _front->val;
-        _front = _front->next;
-        delete temp;
-        --_size;
-        if (_size == 0) _back = _front;
-        return val;
+    if (_front == nullptr) {
+        throw QueueException(QueueErrors::POP_FROM_EMPTY_QUEUE);
     }
-    catch (const QueueException& e) {
-        std::cerr << e.what();
-        exit(QueueErrors::POP_FROM_EMPTY_QUEUE);
-    }
+    Node* temp = _front;
+    T val = _front->val;
+    _front = _front->next;
+    delete temp;
+    --_size;
+    if (_size == 0) _back = _front;
+    return val;
 }
 
 
 template <class T>
 T Queue<T>::popBack() {
-    try {
-        if (_front == nullptr) {
-            throw QueueException(QueueErrors::POP_FROM_EMPTY_QUEUE);
-        }
-        T val = _back->val;
-        --_size;
-        if (_size == 0) {
-            delete _back;
-            _front = _back = nullptr;
-        }
-        else {
-            Node* temp = _back;
-            _back = _front;
-            while (_back->next != temp) {
-                _back = _back->next;
-            }
-            _back->next = nullptr;
-            delete temp;
-        }
-        return val;
+    if (_front == nullptr) {
+        throw QueueException(QueueErrors::POP_FROM_EMPTY_QUEUE);
     }
-    catch (const QueueException& e) {
-        std::cerr << e.what();
-        exit(QueueErrors::POP_FROM_EMPTY_QUEUE);
+    T val = _back->val;
+    --_size;
+    if (_size == 0) {
+        delete _back;
+        _front = _back = nullptr;
     }
+    else {
+        Node* temp = _back;
+        _back = _front;
+        while (_back->next != temp) {
+            _back = _back->next;
+        }
+        _back->next = nullptr;
+        delete temp;
+    }
+    return val;
+    
 }
 
 
 template <class T>
 T Queue<T>::front() const {
-    try {
-        if (_front == nullptr) throw QueueException(QueueErrors::QUEUE_INDEX_OUT_OF_RANGE);
-        return _front->val;
-    }
-    catch (const QueueException e) {
-        std::cerr << e.what();
-        exit(QueueErrors::QUEUE_INDEX_OUT_OF_RANGE);
-    }
+    if (_front == nullptr) throw QueueException(QueueErrors::QUEUE_INDEX_OUT_OF_RANGE);
+    return _front->val;
 }
 
 
 template <class T>
 T Queue<T>::back() const {
-    try {
-        if (_front == nullptr) throw QueueException(QueueErrors::QUEUE_INDEX_OUT_OF_RANGE);
-        return _back->val;
-    }
-    catch (const QueueException e) {
-        std::cerr << e.what();
-        exit(QueueErrors::QUEUE_INDEX_OUT_OF_RANGE);
-    }
+
+    if (_front == nullptr) throw QueueException(QueueErrors::QUEUE_INDEX_OUT_OF_RANGE);
+    return _back->val;
 }

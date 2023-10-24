@@ -49,10 +49,12 @@ public:
 
     void pushFront(const T& val);
     void pushBack(const T& val);
+    void insert(const std::size_t& index, const T& val);
     T popFront();
     T popBack();
-    T front() const;
-    T back() const;
+    void del(const std::size_t& index);
+    [[nodiscard]] T front() const;
+    [[nodiscard]] T back() const;
 };
 
 
@@ -150,6 +152,20 @@ void Queue<T>::pushBack(const T& val) {
 
 
 template <class T>
+void Queue<T>::insert(const std::size_t& index, const T& val) {
+    if (index > _size) throw QueueException(QueueErrors::QUEUE_INDEX_OUT_OF_RANGE);
+    if (index == 0) pushFront(val);
+    else if (index == _size) pushBack(val);
+    else {
+        Node* temp = _front;
+        for (std::size_t i = 0; i < index - 1; ++i) temp = temp->next;
+        temp->next = new Node(val, temp->next);
+        ++_size;
+    }
+}
+
+
+template <class T>
 T Queue<T>::popFront() {
     if (_front == nullptr) {
         throw QueueException(QueueErrors::POP_FROM_EMPTY_QUEUE);
@@ -186,6 +202,28 @@ T Queue<T>::popBack() {
     }
     return val;
     
+}
+
+
+template <class T>
+void Queue<T>::del(const std::size_t& index) {
+    if (_size == 0) throw QueueException(QueueErrors::POP_FROM_EMPTY_QUEUE);
+    if (index >= _size) throw QueueException(QueueErrors::QUEUE_INDEX_OUT_OF_RANGE);
+    Node* temp = _front;
+    if (index == 0) {
+        _front = _front->next;
+        if (_front == nullptr) _back = _front;
+        delete temp;
+    }
+    else {
+        for (std::size_t i = 0; i < index - 1; ++i) {
+            temp = temp->next;
+        }
+        Node* node_to_delete = temp->next;
+        temp->next = temp->next->next;
+        delete node_to_delete;
+    }
+    --_size;
 }
 
 

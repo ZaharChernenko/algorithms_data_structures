@@ -1,8 +1,8 @@
 from MyQueue import MyQueue
 from BinaryTree import BinaryTree
 
-t = BinaryTree()
-t.insert(12)
-t.insert(2)
-t.insert(3)
-print(t)
+q = MyQueue(1, 2, 3)
+q.insert(3, 12)
+q.popFront()
+q.popBack()
+print(q)

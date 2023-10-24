@@ -1,4 +1,6 @@
 class MyQueue:
+    """Очередь на основе односвязного списка, операции по добавлению элементов в начало и конец имеет сложность O(1),
+    остальные - O(n)"""
     class __Node:
         def __init__(self, val=None, next=None):
             self.val = val
@@ -23,10 +25,11 @@ class MyQueue:
     def __str__(self):
         s = "["
         temp = self.__front
-        while temp:
+        while temp is not None:
             s += temp.__str__()
             temp = temp.next
-            if temp is None: break
+            if temp is None:
+                break
             s += ", "
         return s + "]"
 
@@ -37,24 +40,49 @@ class MyQueue:
         return self.__size
 
     def __getitem__(self, item):
-        if item < -self.__size or item >= self.__size:
-            raise IndexError
         if item < 0:
             item += self.__size
+
+        if item >= self.__size:
+            raise IndexError
+
         temp = self.__front
         for i in range(item):
             temp = temp.next
         return temp.val
 
     def __setitem__(self, key, value):
-        if key < -self.__size or key >= self.__size:
-            raise IndexError
         if key < 0:
             key += self.__size
+
+        if key >= self.__size:
+            raise IndexError
+
         temp = self.__front
         for i in range(key):
             temp = temp.next
         temp.val = value
+
+    def __delitem__(self, key):
+        if self.__size == 0:
+            raise IndexError
+
+        if key < 0:
+            key += self.__size
+
+        if key >= self.__size:
+            raise IndexError
+
+        if key == 0:
+            self.__front = self.__front.next
+            if self.__front is None:
+                self.__back = self.__front
+        else:
+            temp = self.__front
+            for i in range(key - 1):
+                temp = temp.next
+            temp.next = temp.next.next
+        self.__size -= 1
 
     def pushFront(self, val):  # сложность операции O(1)
         if not self.__front:
@@ -93,6 +121,24 @@ class MyQueue:
                 self.__back = self.__back.next
             self.__back.next = None
         return val
+
+    def insert(self, key, value):
+        if key < 0:
+            key += self.__size
+
+        if key > self.__size:
+            raise IndexError
+
+        if key == 0:
+            self.pushFront(value)
+        elif key == self.__size:
+            self.pushBack(value)
+        else:
+            temp = self.__front
+            for i in range(key - 1):
+                temp = temp.next
+            temp.next = self.__Node(value, temp.next)
+            self.__size += 1
 
     def front(self):
         if self.__size == 0:

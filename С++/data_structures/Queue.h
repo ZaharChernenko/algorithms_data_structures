@@ -7,14 +7,16 @@
 
 enum QueueErrors {
     POP_FROM_EMPTY_QUEUE = 1,
-    QUEUE_INDEX_OUT_OF_RANGE = 2
+    QUEUE_INDEX_OUT_OF_RANGE = 2,
+    DELETE_FROM_EMPTY_QUEUE = 3
 };
 
 
 class QueueException: public std::exception {
 private:
     std::unordered_map<QueueErrors, const char*> errors_map{{POP_FROM_EMPTY_QUEUE, "\nPop from empty queue\n"},
-                                                             {QUEUE_INDEX_OUT_OF_RANGE, "\nQueue index out of range\n"}};
+                                                             {QUEUE_INDEX_OUT_OF_RANGE, "\nQueue index out of range\n"},
+                                                            {DELETE_FROM_EMPTY_QUEUE, "\nDelete from empty queue\n"}};
     const char* _msg;
 public:
     QueueException(QueueErrors e): _msg{errors_map[e]} {};
@@ -97,7 +99,7 @@ template <class T>
 T& Queue<T>::operator[](const std::size_t& index) {
     if (index > _size - 1) throw QueueException(QueueErrors::QUEUE_INDEX_OUT_OF_RANGE);
     Node* temp = _front;
-    for (std::size_t i = 0; i < index; ++i) {
+    for (std::size_t i = 0; i != index; ++i) {
         temp = temp->next;
     }
     return temp->val;
@@ -158,7 +160,7 @@ void Queue<T>::insert(const std::size_t& index, const T& val) {
     else if (index == _size) pushBack(val);
     else {
         Node* temp = _front;
-        for (std::size_t i = 0; i < index - 1; ++i) temp = temp->next;
+        for (std::size_t i = 1; i != index; ++i) temp = temp->next;
         temp->next = new Node(val, temp->next);
         ++_size;
     }
@@ -216,7 +218,7 @@ void Queue<T>::del(const std::size_t& index) {
         delete temp;
     }
     else {
-        for (std::size_t i = 0; i < index - 1; ++i) {
+        for (std::size_t i = 1; i != index; ++i) {
             temp = temp->next;
         }
         Node* node_to_delete = temp->next;

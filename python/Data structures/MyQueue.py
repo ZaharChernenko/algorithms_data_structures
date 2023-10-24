@@ -1,5 +1,6 @@
 class MyQueue:
-    """Очередь на основе односвязного списка, операции по добавлению элементов в начало и конец имеет сложность O(1),
+    """Очередь на основе односвязного списка, операции по добавлению элементов
+    в начало и конец имеет сложность O(1),
     остальные - O(n)"""
     class __Node:
         def __init__(self, val=None, next=None):
@@ -79,7 +80,7 @@ class MyQueue:
                 self.__back = self.__front
         else:
             temp = self.__front
-            for i in range(key - 1):
+            for i in range(1, key):
                 temp = temp.next
             temp.next = temp.next.next
         self.__size -= 1
@@ -135,7 +136,7 @@ class MyQueue:
             self.pushBack(value)
         else:
             temp = self.__front
-            for i in range(key - 1):
+            for i in range(1, key):
                 temp = temp.next
             temp.next = self.__Node(value, temp.next)
             self.__size += 1

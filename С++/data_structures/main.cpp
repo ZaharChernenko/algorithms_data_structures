@@ -1,13 +1,14 @@
 #include <iostream>
 #include "Queue.h"
+#include "BinaryTree.h"
+#include <vector>
 
 using std::cin, std::cout;
 
 
 int main() {
-    Queue<int> q{0, 1, 2, 3};
-    q.insert(2, 23);
-    q.del(3);
-    cout << q << '\n' << q.size() << '\n';
+    BinaryTree<int> tree {42, 2, 3, 59, 23};
+    tree.insert(99);
+    cout << tree;
     return 0;
 }

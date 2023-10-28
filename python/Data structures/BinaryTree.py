@@ -11,6 +11,7 @@ class BinaryTree:
             self.__size = 0
         else:
             self.__root = self.__Binary_Node(args[0])
+            self.__size = 1
             for i in range(1, len(args)):
                 self.insert(args[i])
 
@@ -21,28 +22,32 @@ class BinaryTree:
         if root is None:
             if self.__root is None:
                 self.__root = self.__Binary_Node(val)
+                self.__size += 1
                 return
             root = self.__root
 
         if val < root.val:
             if root.left is None:
                 root.left = self.__Binary_Node(val)
+                self.__size += 1
                 return
             self.insert(val, root.left)
 
         elif val > root.val:
             if root.right is None:
                 root.right = self.__Binary_Node(val)
+                self.__size += 1
                 return
             self.insert(val, root.right)
 
     def to_list(self, root=None, res=None) -> list:
         if root is None:
             res = []
+            if self.__root is None: return res
             root = self.__root
-        if root.left:
-            self.to_list(root.left, res)
+
+        if root.left: self.to_list(root.left, res)
         res.append(root.val)
-        if root.right:
-            self.to_list(root.right, res)
+        if root.right: self.to_list(root.right, res)
+
         return res

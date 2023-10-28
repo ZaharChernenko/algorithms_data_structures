@@ -110,7 +110,7 @@ template <class T1>
 std::ostream& operator<<(std::ostream& os, const Queue<T1>& q) {
     os << '[';
     auto temp = q._front;
-    while (true) {
+    while (temp != nullptr) {
         os << temp->val;
         temp = temp->next;
         if (temp == nullptr) break;

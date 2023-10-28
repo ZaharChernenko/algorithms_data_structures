@@ -32,6 +32,7 @@ Ans: 8
 Ans: 15
 """
 
+
 def shrink(count_sum):
     global vec, freq_dict, cur_seq, seq_size, left, right, min_sum
     """сужаем диапазон слева (right не изменяется) до тех пор, пока не встретим элемент, который находится в нашем

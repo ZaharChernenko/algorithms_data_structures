@@ -4,6 +4,7 @@ class BinaryTree:
             self.val = val
             self.left = None
             self.right = None
+
     def __init__(self, *args):
         if not args:
             self.__root = None
@@ -18,10 +19,10 @@ class BinaryTree:
 
     def insert(self, val, root=None) -> None:
         if root is None:
-            root = self.__root
             if self.__root is None:
                 self.__root = self.__Binary_Node(val)
                 return
+            root = self.__root
 
         if val < root.val:
             if root.left is None:

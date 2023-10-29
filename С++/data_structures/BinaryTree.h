@@ -15,14 +15,17 @@ private:
     BinaryNode* _root;
     std::size_t _size;
 
+    BinaryNode* _insert(const T& val, BinaryNode* cur_node);
+    std::vector<T> _toVector(BinaryNode* cur_node, std::vector<T>& res) const;
+
 public:
     BinaryTree();
     BinaryTree(std::initializer_list<T> args);
 
     template<class T1> friend std::ostream& operator<<(std::ostream& os, const BinaryTree<T1>& tree);
 
-    void insert(const T& val, BinaryNode* cur_node=nullptr);
-    [[nodiscard]] std::vector<T> toVector(BinaryNode* cur_node=nullptr, std::vector<T>& res=std::vector<T>{}) const;
+    void insert(const T& val);
+    [[nodiscard]] std::vector<T> toVector() const;
 };
 
 
@@ -50,9 +53,9 @@ BinaryTree<T>::BinaryTree(std::initializer_list<T> args):
 template <class T1>
 std::ostream& operator<<(std::ostream& os, const BinaryTree<T1>& tree) {
     std::vector<T1> vec_from_tree {tree.toVector()};
-    /* метод toVector должен обязательно быть const, иначе код не будет компилироваться,
-    так как мы передаем объект по константной ссылке, поэтому он не должен быть изменен,
-    гарантию его сохранности дает const*/
+    /* пїЅпїЅпїЅпїЅпїЅ toVector пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ const, пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ,
+    пїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ,
+    пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ const*/
     os << '[';
     for (std::size_t i = 0; i != vec_from_tree.size(); ++i) {
         os << vec_from_tree[i];
@@ -63,46 +66,35 @@ std::ostream& operator<<(std::ostream& os, const BinaryTree<T1>& tree) {
 
 
 template <class T>
-void BinaryTree<T>::insert(const T &val, BinaryNode* cur_node) {
-    if (cur_node == nullptr) {
-        if (_root == nullptr) {
-            _root = new BinaryNode(val);
-            ++_size;
-            return;
-        }
-        cur_node = _root;
-    }
-
-    if (cur_node->val > val) {
-        if (cur_node->left == nullptr) {
-            cur_node->left = new BinaryNode(val);
-            ++_size;
-            return;
-        }
-        else insert(val, cur_node->left);
-    }
-
-    else {
-        if (cur_node->right == nullptr) {
-            cur_node->right = new BinaryNode(val);
-            ++_size;
-            return;
-        }
-        else insert(val, cur_node->right);
-    }
+typename BinaryTree<T>::BinaryNode* BinaryTree<T>::_insert(const T &val, BinaryNode* cur_node) {
+    if (cur_node == nullptr) return new BinaryNode(val);
+    if (cur_node->val > val) cur_node->left = _insert(val, cur_node->left);
+    else if (cur_node->val < val) cur_node->right = _insert(val, cur_node->right);
+    return cur_node;
 }
 
 
 template <class T>
-std::vector<T> BinaryTree<T>::toVector(BinaryNode* cur_node, std::vector<T>& res) const {
-    if (cur_node == nullptr) {
-        if (_root == nullptr) return res;
-        cur_node = _root;
-    }
+std::vector<T> BinaryTree<T>::_toVector(BinaryNode* cur_node, std::vector<T>& res) const {
+    if (cur_node == nullptr) return res;
 
-    if (cur_node->left != nullptr) toVector(cur_node->left, res);
+    if (cur_node->left != nullptr) _toVector(cur_node->left, res);
     res.push_back(cur_node->val);
-    if (cur_node->right != nullptr) toVector(cur_node->right, res);
+    if (cur_node->right != nullptr) _toVector(cur_node->right, res);
 
+    return res;
+}
+
+
+template <class T>
+void BinaryTree<T>::insert(const T &val) {
+    _root = _insert(val, _root);
+}
+
+
+template <class T>
+std::vector<T> BinaryTree<T>::toVector() const {
+    std::vector<T> res{};
+    _toVector(_root, res);
     return res;
 }

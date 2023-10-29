@@ -65,11 +65,9 @@ class BinaryTree:
             self.insert(val, root.right)
     """
 
-    def __to_list(self, cur_node, res=None) -> list:
+    def __to_list(self, cur_node, res: list) -> list:
         if cur_node is None:
-            return []
-        if res is None:
-            res = []
+            return res
 
         if cur_node.left: self.__to_list(cur_node.left, res)
         res.append(cur_node.val)
@@ -104,4 +102,4 @@ class BinaryTree:
         self.__insert(val)
 
     def to_list(self):
-        return self.__to_list(self.__root)
+        return self.__to_list(self.__root, [])

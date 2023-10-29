@@ -17,6 +17,9 @@ private:
 
     BinaryNode* _insert(const T& val, BinaryNode* cur_node);
     std::vector<T> _toVector(BinaryNode* cur_node, std::vector<T>& res) const;
+    /*VS позволяет сделать std::vector<T>& res=std::vector<T>{}, однако в CLION это не работает
+    как и в большинстве компиляторов, так как std::vector<T>{} - временный объект, который может быть
+    удален, соответственно ссылки на него быть не может*/
 
 public:
     BinaryTree();

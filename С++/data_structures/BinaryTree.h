@@ -16,7 +16,7 @@ private:
     std::size_t _size;
 
     BinaryNode* _insert(const T& val, BinaryNode* cur_node);
-    std::vector<T> _toVector(BinaryNode* cur_node, std::vector<T>& res) const;
+    void _toVector(BinaryNode* cur_node, std::vector<T>& res) const;
     /*VS позволяет сделать std::vector<T>& res=std::vector<T>{}, однако в CLION это не работает
     как и в большинстве компиляторов, так как std::vector<T>{} - временный объект, который может быть
     удален, соответственно ссылки на него быть не может*/
@@ -78,14 +78,12 @@ typename BinaryTree<T>::BinaryNode* BinaryTree<T>::_insert(const T &val, BinaryN
 
 
 template <class T>
-std::vector<T> BinaryTree<T>::_toVector(BinaryNode* cur_node, std::vector<T>& res) const {
-    if (cur_node == nullptr) return res;
+void BinaryTree<T>::_toVector(BinaryNode* cur_node, std::vector<T>& res) const {
+    if (cur_node == nullptr) return;
 
     if (cur_node->left != nullptr) _toVector(cur_node->left, res);
     res.push_back(cur_node->val);
     if (cur_node->right != nullptr) _toVector(cur_node->right, res);
-
-    return res;
 }
 
 

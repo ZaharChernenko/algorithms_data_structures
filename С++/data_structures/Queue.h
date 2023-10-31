@@ -55,8 +55,8 @@ public:
     T popFront();
     T popBack();
     void del(const std::size_t& index);
-    [[nodiscard]] T front() const;
-    [[nodiscard]] T back() const;
+    [[nodiscard]] T& front() const;
+    [[nodiscard]] T& back() const;
 };
 
 
@@ -230,14 +230,14 @@ void Queue<T>::del(const std::size_t& index) {
 
 
 template <class T>
-T Queue<T>::front() const {
+T& Queue<T>::front() const {
     if (_front == nullptr) throw QueueException(QueueErrors::QUEUE_INDEX_OUT_OF_RANGE);
     return _front->val;
 }
 
 
 template <class T>
-T Queue<T>::back() const {
+T& Queue<T>::back() const {
 
     if (_front == nullptr) throw QueueException(QueueErrors::QUEUE_INDEX_OUT_OF_RANGE);
     return _back->val;

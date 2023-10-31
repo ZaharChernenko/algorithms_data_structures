@@ -39,7 +39,7 @@ def validExp1(exp: str) -> bool:
         if elem in tokens:
             stack.append(elem)
         elif elem in ")]}":
-            if tokens[stack.pop()] != elem:
+            if not stack or tokens[stack.pop()] != elem:
                 return False
     return len(stack) == 0
 

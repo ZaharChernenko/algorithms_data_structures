@@ -5,14 +5,14 @@ class BinaryTree:
             self.left = None
             self.right = None
 
+        def __str__(self):
+            return str(self.val)
+
     def __init__(self, *args):
-        if not args:
-            self.__root = None
-            self.__size = 0
-        else:
-            self.__root = self.__Binary_Node(args[0])
-            self.__size = 1
-            for i in range(1, len(args)):
+        self.__root = None
+        self.__size = 0
+        if args:
+            for i in range(len(args)):
                 self.__insert(args[i])
 
     def __str__(self):
@@ -67,6 +67,7 @@ class BinaryTree:
                 return
             self.insert(val, root.right)
     """
+
     def __remove(self, cur_node: __Binary_Node, val):
         parent = None
         while cur_node is not None and cur_node.val != val:
@@ -80,7 +81,6 @@ class BinaryTree:
             raise KeyError
 
         new_node = None
-
         if cur_node.left is None:
             new_node = cur_node.right
         elif cur_node.right is None:
@@ -120,9 +120,8 @@ class BinaryTree:
 
         assert cur_node.val == val, "something unexpected"
         if cur_node.left is not None and cur_node.right is not None:
-            min_val = self.__findMin(cur_node.right)
-            cur_node.val = min_val
-            cur_node.right = self.__discard(cur_node.right, min_val)
+            cur_node.val = self.__findMin(cur_node.right)
+            cur_node.right = self.__discard(cur_node.right, cur_node.val)
             return cur_node
 
         new_node = None
@@ -142,13 +141,13 @@ class BinaryTree:
         if cur_node is None:
             return res
 
-        if cur_node.left: self.__to_list(cur_node.left, res)
+        self.__to_list(cur_node.left, res)
         res.append(cur_node.val)
-        if cur_node.right: self.__to_list(cur_node.right, res)
+        self.__to_list(cur_node.right, res)
 
         return res
 
-    def insert(self, val):  # инкапсуляция необходима, чтобы пользователь не добавил какой-то неизвестный корень
+    def insert(self, val):
         self.__insert(val)
 
     def remove(self, val):
@@ -157,5 +156,7 @@ class BinaryTree:
     def discard(self, val):
         self.__root = self.__discard(self.__root, val)
 
-    def to_list(self):
+    def to_list(self):  # нужна инкапсуляция, чтобы пользователь не ввел корень или список
         return self.__to_list(self.__root, [])
+
+# https://acm.bsu.by/wiki/Программная_реализация_бинарных_поисковых_деревьев#.D0.A3.D0.B4.D0.B0.D0.BB.D0.B5.D0.BD.D0.B8.D0.B5_.D0.B8.D0.B7_.D0.B4.D0.B5.D1.80.D0.B5.D0.B2.D0.B0

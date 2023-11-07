@@ -20,7 +20,7 @@ def piFunc(a: str):
         if a[i] == a[prev_pi_f]:
             prev_pi_f += 1
         pi_funcs_arr[i] = prev_pi_f
-    return pi_funcs_arr[-1]
+    return max(pi_funcs_arr)
 
 
 print(piFunc("abcdabcabcdabcdab"))

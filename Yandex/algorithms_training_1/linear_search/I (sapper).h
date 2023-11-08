@@ -1,3 +1,4 @@
+#pragma once
 #include <iostream>
 #include <vector>
 #include <tuple>
@@ -17,7 +18,7 @@ void createMap(std::vector<std::vector<int>>& map, const std::vector<std::tuple<
 }
 
 
-int main() {
+int inputI() {
     int n_rows, n_cols, n_mines;
     std::cin >> n_rows >> n_cols >> n_mines;
 

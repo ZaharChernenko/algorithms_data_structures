@@ -23,7 +23,6 @@ std::vector<int> maxMul3(const std::vector<int>& vec) {
 			heap2.pop();
 			heap2.push(elem);
 		}
-
 	}
 
 	std::vector<int> pos(3);

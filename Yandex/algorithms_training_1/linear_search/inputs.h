@@ -2,6 +2,7 @@
 #include <vector>
 #include <sstream>
 #include <string>
+#include <cmath>
 
 
 // если не дан размер вектора (через консоль неудобно, так медленнее)

@@ -192,10 +192,17 @@ cython_debug/
 *.out
 *.app
 
+# Visual Studio
+*.sln
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+
 # temp
 .DS_Store
 .vs
 
 #dirs
 out
+x64
 cmake-build-debug

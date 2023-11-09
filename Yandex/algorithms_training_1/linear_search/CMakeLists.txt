@@ -16,4 +16,5 @@ add_executable(linear_search
         "H(mul3).h"
         inputs.h
         main.cpp
-        "I (sapper).h")
+        "I (sapper).h"
+        "J (triangle).h")

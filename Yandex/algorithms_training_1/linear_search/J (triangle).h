@@ -1,10 +1,11 @@
+#pragma once
 #include <iostream>
 #include <string>
 #include <cmath>
 #include <iomanip>
 
 
-int main() {
+int triangle() {
     int n_req;
     std::cin >> n_req;
 

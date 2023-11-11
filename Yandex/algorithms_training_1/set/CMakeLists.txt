@@ -10,4 +10,7 @@ add_executable(set
         D.h
         C.h
         E.h
-        G.h)
+        G.h
+        J.h
+        H.h
+        I.h)

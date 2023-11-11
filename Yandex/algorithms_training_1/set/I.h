@@ -1,8 +1,9 @@
+#pragma once
 #include <iostream>
 #include <unordered_set>
 #include <string>
 
-int main() {
+int solutionI() {
     std::unordered_set<std::string> uniq_langs, everyone_langs;
     int n, n_langs, n_first_langs;
     std::cin >> n >> n_first_langs;
@@ -22,7 +23,7 @@ int main() {
             uniq_langs.insert(lang);
             others_langs.insert(lang);
         }
-        temp_set = everyone_langs;
+        temp_set = everyone_langs; // в плюсах выполняется копирование элементов, а не самого объекта
         for (const auto& elem: temp_set) {
             if (others_langs.count(elem) == 0) everyone_langs.erase(elem);
         }

@@ -13,8 +13,8 @@ class BinaryTree:
         self.__size = 0
         self.__height = 0
         if args:
-            for i in range(len(args)):
-                self.__insert(args[i])
+            for elem in args:
+                self.__insert(elem)
 
     def __str__(self):
         return str(self.to_list())

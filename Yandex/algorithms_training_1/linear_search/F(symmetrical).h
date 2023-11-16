@@ -41,6 +41,7 @@ std::vector<short> simmetricLinear(const std::vector<short>& vec) {
 		else if (end == vec.size() - 1) ++start;
 		else end = vec.size() - 1;
 	}
-	std::vector<short> res;
-	for (int i = end; i != -1; --i) res.push_back(vec[i]);
+	std::vector<short> res(end + 1);
+	for (int i = end, j = 0; i != -1; --i, ++j) res[j] = vec[i];
+    return res;
 }

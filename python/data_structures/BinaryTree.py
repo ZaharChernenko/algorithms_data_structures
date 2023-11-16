@@ -11,6 +11,7 @@ class BinaryTree:
     def __init__(self, *args):
         self.__root = None
         self.__size = 0
+        self.__height = 0
         if args:
             for i in range(len(args)):
                 self.__insert(args[i])
@@ -24,9 +25,11 @@ class BinaryTree:
     def __insert(self, val) -> None:
         parent = None
         cur_node = self.__root
+        height = 1
 
         while cur_node is not None:
             parent = cur_node
+            height += 1
 
             if cur_node.val > val:
                 cur_node = cur_node.left
@@ -42,6 +45,7 @@ class BinaryTree:
         else:
             parent.right = self.__Binary_Node(val)
 
+        self.__height = max(self.__height, height)
         self.__size += 1
 
     """ Рекурсивная реализация вставки, по идее менее эффективная, чем цикл
@@ -147,6 +151,15 @@ class BinaryTree:
 
         return res
 
+    def __printLeafs(self, cur_node):
+        if cur_node is None:
+            return
+        if cur_node.left is None and cur_node.right is None:
+            print(cur_node.val)
+            return
+        self.__printLeafs(cur_node.left)
+        self.__printLeafs(cur_node.right)
+
     def insert(self, val):
         self.__insert(val)
 
@@ -158,5 +171,11 @@ class BinaryTree:
 
     def to_list(self):  # нужна инкапсуляция, чтобы пользователь не ввел корень или список
         return self.__to_list(self.__root, [])
+
+    def height(self):
+        return self.__height
+
+    def printLeafs(self):
+        self.__printLeafs(self.__root)
 
 # https://acm.bsu.by/wiki/Программная_реализация_бинарных_поисковых_деревьев#.D0.A3.D0.B4.D0.B0.D0.BB.D0.B5.D0.BD.D0.B8.D0.B5_.D0.B8.D0.B7_.D0.B4.D0.B5.D1.80.D0.B5.D0.B2.D0.B0

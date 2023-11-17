@@ -1,5 +1,5 @@
 class BinaryTree:
-    class __Binary_Node:
+    class __BinaryNode:
         def __init__(self, val=None):
             self.val = val
             self.left = None
@@ -17,7 +17,7 @@ class BinaryTree:
                 self.__insert(elem)
 
     def __str__(self):
-        return str(self.to_list())
+        return str(self.toList())
 
     def __len__(self):
         return self.__size
@@ -39,11 +39,11 @@ class BinaryTree:
                 return
 
         if parent is None:
-            self.__root = self.__Binary_Node(val)
+            self.__root = self.__BinaryNode(val)
         elif parent.val > val:
-            parent.left = self.__Binary_Node(val)
+            parent.left = self.__BinaryNode(val)
         else:
-            parent.right = self.__Binary_Node(val)
+            parent.right = self.__BinaryNode(val)
 
         self.__height = max(self.__height, height)
         self.__size += 1
@@ -52,27 +52,27 @@ class BinaryTree:
         def insert(self, val, root=None) -> None:
         if root is None:
             if self.__root is None:
-                self.__root = self.__Binary_Node(val)
+                self.__root = self.__BinaryNode(val)
                 self.__size += 1
                 return
             root = self.__root
 
         if val < root.val:
             if root.left is None:
-                root.left = self.__Binary_Node(val)
+                root.left = self.__BinaryNode(val)
                 self.__size += 1
                 return
             self.insert(val, root.left)
 
         elif val > root.val:
             if root.right is None:
-                root.right = self.__Binary_Node(val)
+                root.right = self.__BinaryNode(val)
                 self.__size += 1
                 return
             self.insert(val, root.right)
     """
 
-    def __remove(self, cur_node: __Binary_Node, val):
+    def __remove(self, cur_node: __BinaryNode, val):
         parent = None
         while cur_node is not None and cur_node.val != val:
             parent = cur_node
@@ -103,8 +103,8 @@ class BinaryTree:
         self.__replaceChild(parent, old=cur_node, new=new_node)
         self.__size -= 1
 
-    def __replaceChild(self, parent: __Binary_Node,
-                       old: __Binary_Node, new: __Binary_Node):
+    def __replaceChild(self, parent: __BinaryNode,
+                       old: __BinaryNode, new: __BinaryNode):
         if parent is None:
             self.__root = new
         elif parent.left == old:
@@ -112,7 +112,7 @@ class BinaryTree:
         elif parent.right == old:
             parent.right = new
 
-    def __discard(self, cur_node: __Binary_Node, val):
+    def __discard(self, cur_node: __BinaryNode, val):
         if cur_node is None:
             return cur_node
         if cur_node.val > val:
@@ -136,18 +136,18 @@ class BinaryTree:
         self.__size -= 1
         return new_node
 
-    def __findMin(self, cur_node: __Binary_Node):
+    def __findMin(self, cur_node: __BinaryNode):
         while cur_node.left is not None:
             cur_node = cur_node.left
         return cur_node.val
 
-    def __to_list(self, cur_node, res: list) -> list:
+    def __toList(self, cur_node, res: list) -> list:
         if cur_node is None:
             return res
 
-        self.__to_list(cur_node.left, res)
+        self.__toList(cur_node.left, res)
         res.append(cur_node.val)
-        self.__to_list(cur_node.right, res)
+        self.__toList(cur_node.right, res)
 
         return res
 
@@ -169,8 +169,8 @@ class BinaryTree:
     def discard(self, val):
         self.__root = self.__discard(self.__root, val)
 
-    def to_list(self):  # нужна инкапсуляция, чтобы пользователь не ввел корень или список
-        return self.__to_list(self.__root, [])
+    def toList(self):  # нужна инкапсуляция, чтобы пользователь не ввел корень или список
+        return self.__toList(self.__root, [])
 
     def height(self):
         return self.__height

@@ -24,15 +24,7 @@ class MyQueue:
                 self.pushBack(args[i])
 
     def __str__(self):
-        s = "["
-        temp = self.__front
-        while temp is not None:
-            s += temp.__str__()
-            temp = temp.next
-            if temp is None:
-                break
-            s += ", "
-        return s + "]"
+        return str(self.toList())
 
     """def __str__(self):
         return self.__head.__str__()"""
@@ -48,7 +40,7 @@ class MyQueue:
             raise IndexError
 
         temp = self.__front
-        for i in range(item):
+        for _ in range(item):
             temp = temp.next
         return temp.val
 
@@ -60,7 +52,7 @@ class MyQueue:
             raise IndexError
 
         temp = self.__front
-        for i in range(key):
+        for _ in range(key):
             temp = temp.next
         temp.val = value
 
@@ -80,10 +72,18 @@ class MyQueue:
                 self.__back = self.__front
         else:
             temp = self.__front
-            for i in range(1, key):
+            for _ in range(1, key):
                 temp = temp.next
             temp.next = temp.next.next
         self.__size -= 1
+
+    def toList(self) -> list:
+        vec = [0] * self.__size
+        cur_node = self.__front
+        for i in range(self.__size):
+            vec[i] = cur_node.val
+            cur_node = cur_node.next
+        return vec
 
     def pushFront(self, val):  # сложность операции O(1)
         if not self.__front:
@@ -136,7 +136,7 @@ class MyQueue:
             self.pushBack(value)
         else:
             temp = self.__front
-            for i in range(1, key):
+            for _ in range(1, key):
                 temp = temp.next
             temp.next = self.__Node(value, temp.next)
             self.__size += 1

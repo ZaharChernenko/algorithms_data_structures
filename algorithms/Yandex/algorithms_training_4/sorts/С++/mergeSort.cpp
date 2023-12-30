@@ -40,3 +40,4 @@ int main() {
     cout << vec[vec.size() - 1];
     return 0;
 }
+

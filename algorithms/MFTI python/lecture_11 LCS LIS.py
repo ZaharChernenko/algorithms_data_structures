@@ -87,7 +87,7 @@ def lenLIS(seq) -> int:
     return length
 
 
-def lis(seq) -> int:
+def lis(seq) -> list:
     min_num_arr = [float("inf")] * (len(seq) + 1)
     min_num_arr[0] = float("-inf")
     length = 0
@@ -115,5 +115,5 @@ def lis(seq) -> int:
 
 if __name__ == "__main__":
     import doctest
-    # doctest.testmod()
+    doctest.testmod()
     print(lis([4, 5, 6, 1, 2]))

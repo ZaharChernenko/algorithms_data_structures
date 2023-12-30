@@ -7,6 +7,7 @@
 '100'
 """
 
+import doctest
 
 decode_to10_dict = {str(i): i for i in range(10)}
 decode_to10_dict.update({"A": 10, "B": 11, "C": 12, "D": 13, "E": 14, "F": 15})
@@ -21,13 +22,13 @@ def convertToDecimal(num: str, cur_base: int) -> int:
     return res
 
 
-def changeBase(num: str, wanted_base: int=2, cur_base: int=10) -> str:
+def changeBase(num_str: str, wanted_base: int = 2, cur_base: int = 10) -> str:
     """function converts number from one base to another"""
-    assert isinstance(num, str), "number must be str type"
+    assert isinstance(num_str, str), "number must be str type"
     if cur_base != 10:
-        num = convertToDecimal(num, cur_base)
+        num = convertToDecimal(num_str, cur_base)
     else:
-        num = int(num)
+        num = int(num_str)
 
     res = []
     while num > 0:
@@ -37,7 +38,6 @@ def changeBase(num: str, wanted_base: int=2, cur_base: int=10) -> str:
 
 
 if __name__ == "__main__":
-    import doctest
     doctest.testmod()
 
 """Такие алгоритмы как, поиск числа, сумма, произведение, максимум, минимум, подсчет числа элементов

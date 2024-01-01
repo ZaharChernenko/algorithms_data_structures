@@ -5,26 +5,27 @@ class MyQueue:
     """Очередь на основе односвязного списка, операции по добавлению элементов
 в начало и конец имеет сложность O(1), остальные - O(n)"""
     class _Node:
-        def __init__(self, obj=None, p_next=None):
+        def __init__(self, obj, p_next: MyQueue._Node | None = None):
             self.obj = obj
-            self.p_next: MyQueue._Node | None = p_next
+            self.p_next = p_next
 
         def __str__(self):
-            return f"Node {{obj = {self.obj}, next = {self.p_next}}}"
+            return str(self.obj)  # return f"Node {{obj = {self.obj}, next = {self.p_next}}}"
 
     def __init__(self, *args):
-        self._front = self._back = None
-        self._size = 0
+        self._front: MyQueue._Node | None = None
+        self._back: MyQueue._Node | None = None
+        self._size: int = 0
         for arg in args:
             self.pushBack(arg)
 
     def __str__(self):
-        return str(self.toList())
+        return f"Queue [{', '.join(map(str, self))}]"
 
     def __len__(self):
         return self._size
 
-    def __getitem__(self, index):
+    def __getitem__(self, index: int):
         if index < 0:
             index += self._size
 
@@ -36,7 +37,7 @@ class MyQueue:
             cur_node = cur_node.p_next
         return cur_node.obj
 
-    def __setitem__(self, index, obj):
+    def __setitem__(self, index: int, obj):
         if index < 0:
             index += self._size
 
@@ -48,7 +49,7 @@ class MyQueue:
             cur_node = cur_node.p_next
         cur_node.obj = obj
 
-    def __delitem__(self, index):
+    def __delitem__(self, index: int):
         if index < 0:
             index += self._size
 
@@ -63,6 +64,9 @@ class MyQueue:
             cur_node = self._front
             for _ in range(index - 1):
                 cur_node = cur_node.p_next
+
+            if cur_node.p_next == self._back:
+                self._back = cur_node
             cur_node.p_next = cur_node.p_next.p_next
         self._size -= 1
 
@@ -70,7 +74,7 @@ class MyQueue:
         return self.QueueIterator(self._front)
 
     class QueueIterator:
-        def __init__(self, front: MyQueue._Node):
+        def __init__(self, front: MyQueue._Node | None):
             self.cur_node = MyQueue._Node(None, front)
 
         def __iter__(self):
@@ -98,14 +102,14 @@ class MyQueue:
         self._size += 1
 
     def pushBack(self, obj):  # сложность операции O(1)
-        if not self._front:
+        if not self._back:
             self._front = self._back = self._Node(obj)
         else:
             self._back.p_next = self._Node(obj)
             self._back = self._back.p_next
         self._size += 1
 
-    def insert(self, index, obj):
+    def insert(self, index: int, obj):
         if index < 0:
             index += self._size
         if index == 0:

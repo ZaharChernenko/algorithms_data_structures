@@ -53,9 +53,5 @@ def bestOfTotal(func, repeat: int, loops: int, *args, **kwargs):
 
 
 q = MyQueue(1, 2, 3, 4, 5)
-for elem in q:
-    elem = 2
-print(q)
-
-q = Queue()
-print(dir(q))
+q.insert(23, 6)
+q.insert(0, 0)

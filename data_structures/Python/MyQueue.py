@@ -71,7 +71,15 @@ class MyQueue:
         self._size -= 1
 
     def __iter__(self):
-        return self.QueueIterator(self._front)
+        return MyQueue.QueueIterator(self._front)
+
+    def __contains__(self, obj):
+        cur_node: MyQueue._Node | None = self._front
+        for _ in range(self._size):
+            if obj == cur_node.obj:
+                return True
+            cur_node = cur_node.p_next
+        return False
 
     class QueueIterator:
         def __init__(self, front: MyQueue._Node | None):
@@ -96,16 +104,16 @@ class MyQueue:
 
     def pushFront(self, obj):  # сложность операции O(1)
         if not self._front:
-            self._front = self._back = self._Node(obj)
+            self._front = self._back = MyQueue._Node(obj)
         else:
-            self._front = self._Node(obj, self._front)
+            self._front = MyQueue._Node(obj, self._front)
         self._size += 1
 
     def pushBack(self, obj):  # сложность операции O(1)
         if not self._back:
-            self._front = self._back = self._Node(obj)
+            self._front = self._back = MyQueue._Node(obj)
         else:
-            self._back.p_next = self._Node(obj)
+            self._back.p_next = MyQueue._Node(obj)
             self._back = self._back.p_next
         self._size += 1
 
@@ -120,7 +128,7 @@ class MyQueue:
             cur_node = self._front
             for _ in range(index - 1):
                 cur_node = cur_node.p_next
-            cur_node.p_next = self._Node(obj, cur_node.p_next)
+            cur_node.p_next = MyQueue._Node(obj, cur_node.p_next)
             self._size += 1
 
     def popFront(self):  # O(1)
@@ -137,15 +145,14 @@ class MyQueue:
         if not self._back:
             raise IndexError("pop from empty queue")
         obj = self._back.obj
-        self._size -= 1
         if self._size == 0:
             self._front = self._back = None
         else:
-            temp = self._back
             self._back = self._front
-            while self._back.p_next != temp:
+            for _ in range(self._size - 2):
                 self._back = self._back.p_next
             self._back.p_next = None
+        self._size -= 1
         return obj
 
     def front(self):

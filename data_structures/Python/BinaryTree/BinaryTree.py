@@ -1,181 +1,173 @@
+from __future__ import annotations
+
+
 class BinaryTree:
-    class __BinaryNode:
-        def __init__(self, val=None):
-            self.val = val
-            self.left = None
-            self.right = None
+    """Реализация бинарного дерева с помощью цикла"""
+    class _Node:
+        def __init__(self, obj):
+            self.obj = obj
+            self.left: BinaryTree._Node | None = None
+            self.right: BinaryTree._Node | None = None
 
         def __str__(self):
-            return str(self.val)
+            return str(self.obj)
 
     def __init__(self, *args):
-        self.__root = None
-        self.__size = 0
-        self.__height = 0
-        if args:
-            for elem in args:
-                self.__insert(elem)
+        self._root: BinaryTree._Node | None = None
+        self._size: int = 0
+        for arg in args:
+            self.insert(arg)
 
     def __str__(self):
-        return str(self.toList())
+        return f"BinaryTree [{', '.join(map(str, self.treeIterator()))}]"
 
     def __len__(self):
-        return self.__size
+        return self._size
 
-    def __insert(self, val) -> None:
-        parent = None
-        cur_node = self.__root
-        height = 1
+    def __iter__(self):
+        return self.treeIterator()
 
-        while cur_node is not None:
-            parent = cur_node
-            height += 1
-
-            if cur_node.val > val:
+    def __contains__(self, obj):
+        cur_node: BinaryTree._Node | None = self._root
+        while cur_node:
+            if obj < cur_node.obj:
                 cur_node = cur_node.left
-            elif cur_node.val < val:
+            elif obj > cur_node.obj:
+                cur_node = cur_node.right
+            else:
+                return True
+        return False
+
+    def _replaceChild(self, parent, old_child, new_child):
+        if not parent:
+            self._root = new_child
+        elif parent.left == old_child:
+            parent.left = new_child
+        else:
+            parent.right = new_child
+
+    def insert(self, obj):
+        parent: BinaryTree._Node | None = None
+        cur_node = self._root
+
+        while cur_node:
+            if obj < cur_node.obj:
+                parent = cur_node
+                cur_node = cur_node.left
+            elif obj > cur_node.obj:
+                parent = cur_node
                 cur_node = cur_node.right
             else:
                 return
 
-        if parent is None:
-            self.__root = self.__BinaryNode(val)
-        elif parent.val > val:
-            parent.left = self.__BinaryNode(val)
+        new_node = BinaryTree._Node(obj)
+        if not parent:
+            self._root = new_node
+        elif obj < parent.obj:
+            parent.left = new_node
         else:
-            parent.right = self.__BinaryNode(val)
+            parent.right = new_node
+        self._size += 1
 
-        self.__height = max(self.__height, height)
-        self.__size += 1
+    def remove(self, obj):
+        parent: BinaryTree._Node | None = None
+        cur_node = self._root
 
-    """ Рекурсивная реализация вставки, по идее менее эффективная, чем цикл
-        def insert(self, val, root=None) -> None:
-        if root is None:
-            if self.__root is None:
-                self.__root = self.__BinaryNode(val)
-                self.__size += 1
-                return
-            root = self.__root
-
-        if val < root.val:
-            if root.left is None:
-                root.left = self.__BinaryNode(val)
-                self.__size += 1
-                return
-            self.insert(val, root.left)
-
-        elif val > root.val:
-            if root.right is None:
-                root.right = self.__BinaryNode(val)
-                self.__size += 1
-                return
-            self.insert(val, root.right)
-    """
-
-    def __remove(self, cur_node: __BinaryNode, val):
-        parent = None
-        while cur_node is not None and cur_node.val != val:
-            parent = cur_node
-            if cur_node.val > val:
+        while cur_node:
+            if obj < cur_node.obj:
+                parent = cur_node
                 cur_node = cur_node.left
-            elif cur_node.val < val:
+            elif obj > cur_node.obj:
+                parent = cur_node
                 cur_node = cur_node.right
+            else:
+                break
 
-        if cur_node is None:
-            raise KeyError
+        if not cur_node:
+            raise KeyError(obj)
 
-        new_node = None
-        if cur_node.left is None:
+        if not cur_node.left:
             new_node = cur_node.right
-        elif cur_node.right is None:
+        elif not cur_node.right:
             new_node = cur_node.left
         else:
             min_node_parent = cur_node
             min_node = cur_node.right
-            while min_node.left is not None:
+            while min_node.left:
                 min_node_parent = min_node
                 min_node = min_node.left
-            self.__replaceChild(min_node_parent, min_node, min_node.right)
-
+            cur_node.obj = min_node.obj
             new_node = cur_node
-            cur_node.val = min_node.val
+            self._replaceChild(min_node_parent, min_node, min_node.right)
+        self._replaceChild(parent, cur_node, new_node)
+        self._size -= 1
 
-        self.__replaceChild(parent, old=cur_node, new=new_node)
-        self.__size -= 1
+    def discard(self, obj):
+        parent: BinaryTree._Node | None = None
+        cur_node = self._root
 
-    def __replaceChild(self, parent: __BinaryNode,
-                       old: __BinaryNode, new: __BinaryNode):
-        if parent is None:
-            self.__root = new
-        elif parent.left == old:
-            parent.left = new
-        elif parent.right == old:
-            parent.right = new
+        while cur_node:
+            if obj < cur_node.obj:
+                parent = cur_node
+                cur_node = cur_node.left
+            elif obj > cur_node.obj:
+                parent = cur_node
+                cur_node = cur_node.right
+            else:
+                break
 
-    def __discard(self, cur_node: __BinaryNode, val):
-        if cur_node is None:
-            return cur_node
-        if cur_node.val > val:
-            cur_node.left = self.__discard(cur_node.left, val)
-            return cur_node
-        if cur_node.val < val:
-            cur_node.right = self.__discard(cur_node.right, val)
-            return cur_node
+        if not cur_node:
+            return
 
-        assert cur_node.val == val, "something unexpected"
-        if cur_node.left is not None and cur_node.right is not None:
-            cur_node.val = self.__findMin(cur_node.right)
-            cur_node.right = self.__discard(cur_node.right, cur_node.val)
-            return cur_node
-
-        new_node = None
-        if cur_node.left is None:
+        if not cur_node.left:
             new_node = cur_node.right
-        if cur_node.right is None:
+        elif not cur_node.right:
             new_node = cur_node.left
-        self.__size -= 1
-        return new_node
+        else:
+            min_node_parent = cur_node
+            min_node = cur_node.right
+            while min_node.left:
+                min_node_parent = min_node
+                min_node = min_node.left
+            cur_node.obj = min_node.obj
+            new_node = cur_node
+            self._replaceChild(min_node_parent, min_node, min_node.right)
+        self._replaceChild(parent, cur_node, new_node)
+        self._size -= 1
 
-    def __findMin(self, cur_node: __BinaryNode):
-        while cur_node.left is not None:
-            cur_node = cur_node.left
-        return cur_node.val
+    def _toList(self, cur_node: BinaryTree._Node | None, res: list) -> None:
+        if not cur_node:
+            return
 
-    def __toList(self, cur_node, res: list) -> list:
-        if cur_node is None:
-            return res
+        self._toList(cur_node.left, res)
+        res.append(cur_node.obj)
+        self._toList(cur_node.right, res)
 
-        self.__toList(cur_node.left, res)
-        res.append(cur_node.val)
-        self.__toList(cur_node.right, res)
-
+    def toList(self) -> list:
+        res: list = []
+        self._toList(self._root, res)
         return res
 
-    def __printLeafs(self, cur_node):
-        if cur_node is None:
+    def _treeIterator(self, cur_node: BinaryTree._Node | None):
+        if not cur_node:
             return
-        if cur_node.left is None and cur_node.right is None:
-            print(cur_node.val)
-            return
-        self.__printLeafs(cur_node.left)
-        self.__printLeafs(cur_node.right)
+        yield from self._treeIterator(cur_node.left)
+        yield cur_node.obj
+        yield from self._treeIterator(cur_node.right)
 
-    def insert(self, val):
-        self.__insert(val)
+    def treeIterator(self):
+        return self._treeIterator(self._root)
 
-    def remove(self, val):
-        self.__remove(self.__root, val)
 
-    def discard(self, val):
-        self.__root = self.__discard(self.__root, val)
+if __name__ == "__main__":
+    print(BinaryTree.__doc__)
+    import timeit
+    time_arr = timeit.repeat(setup="from BinaryTree import BinaryTree",
+                             stmt="BinaryTree(*list(range(500)))",
+                             repeat=10, number=100)
+    time_arr.sort()
+    for time in time_arr:
+        print(time)
 
-    def toList(self):  # нужна инкапсуляция, чтобы пользователь не ввел корень или список
-        return self.__toList(self.__root, [])
-
-    def height(self):
-        return self.__height
-
-    def printLeafs(self):
-        self.__printLeafs(self.__root)
 
 # https://acm.bsu.by/wiki/Программная_реализация_бинарных_поисковых_деревьев#.D0.A3.D0.B4.D0.B0.D0.BB.D0.B5.D0.BD.D0.B8.D0.B5_.D0.B8.D0.B7_.D0.B4.D0.B5.D1.80.D0.B5.D0.B2.D0.B0

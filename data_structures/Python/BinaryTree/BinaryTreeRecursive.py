@@ -2,6 +2,7 @@ from __future__ import annotations
 
 
 class BinaryTreeRecursive:
+    """Реализация бинарного дерева с помощью рекурсии"""
     class _Node:
         def __init__(self, obj):
             self.obj = obj
@@ -37,7 +38,7 @@ class BinaryTreeRecursive:
                 return True
         return False
 
-    def findMin(self, cur_node: BinaryTreeRecursive._Node):
+    def _findMin(self, cur_node: BinaryTreeRecursive._Node):
         while cur_node.left:
             cur_node = cur_node.left
         return cur_node.obj
@@ -75,7 +76,7 @@ class BinaryTreeRecursive:
         if not cur_node.right:
             return cur_node.left
 
-        new_obj = self.findMin(cur_node.right)
+        new_obj = self._findMin(cur_node.right)
         cur_node.obj = new_obj
         cur_node.right = self._remove(cur_node.right, new_obj)
         return cur_node
@@ -103,7 +104,7 @@ class BinaryTreeRecursive:
             self._size -= 1
             return cur_node.left
 
-        new_obj = self.findMin(cur_node.right)
+        new_obj = self._findMin(cur_node.right)
         cur_node.obj = new_obj
         cur_node.right = self._discard(cur_node.right, new_obj)
         return cur_node
@@ -135,6 +136,12 @@ class BinaryTreeRecursive:
         return self._treeIterator(self._root)
 
 
-tree = BinaryTreeRecursive(1, 2, 3)
-tree.insert(1)
-print(len(tree))
+if __name__ == "__main__":
+    print(BinaryTreeRecursive.__doc__)
+    import timeit
+    time_arr = timeit.repeat(setup="from BinaryTreeRecursive import BinaryTreeRecursive",
+                             stmt="BinaryTreeRecursive(*list(range(500)))",
+                             repeat=10, number=100)
+    time_arr.sort()
+    for time in time_arr:
+        print(time)

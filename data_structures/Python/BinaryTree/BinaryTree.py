@@ -12,6 +12,32 @@ class BinaryTree:
         def __str__(self):
             return str(self.obj)
 
+        def __repr__(self):
+            return f"Node {{obj: {str(self.obj)}}}"
+
+    class _TreeIterator:
+        def __init__(self, cur_node: BinaryTree._Node | None):
+            self.stack: list = []
+
+            while cur_node:
+                self.stack.append(cur_node)
+                cur_node = cur_node.left
+
+        def __iter__(self):
+            return self
+
+        def __next__(self):
+            if not self.stack:
+                raise StopIteration
+            cur_node = self.stack.pop()
+
+            new_node = cur_node.right
+            while new_node:
+                self.stack.append(new_node)
+                new_node = new_node.left
+
+            return cur_node.obj
+
     def __init__(self, *args):
         self._root: BinaryTree._Node | None = None
         self._size: int = 0
@@ -19,13 +45,13 @@ class BinaryTree:
             self.insert(arg)
 
     def __str__(self):
-        return f"BinaryTree [{', '.join(map(str, self.treeIterator()))}]"
+        return f"BinaryTree [{', '.join(map(str, self))}]"
 
     def __len__(self):
         return self._size
 
     def __iter__(self):
-        return self.treeIterator()
+        return self._TreeIterator(self._root)
 
     def __contains__(self, obj):
         cur_node: BinaryTree._Node | None = self._root
@@ -41,7 +67,7 @@ class BinaryTree:
     def _replaceChild(self, parent, old_child, new_child):
         if not parent:
             self._root = new_child
-        elif parent.left == old_child:
+        elif parent.left is old_child:
             parent.left = new_child
         else:
             parent.right = new_child
@@ -147,16 +173,6 @@ class BinaryTree:
         res: list = []
         self._toList(self._root, res)
         return res
-
-    def _treeIterator(self, cur_node: BinaryTree._Node | None):
-        if not cur_node:
-            return
-        yield from self._treeIterator(cur_node.left)
-        yield cur_node.obj
-        yield from self._treeIterator(cur_node.right)
-
-    def treeIterator(self):
-        return self._treeIterator(self._root)
 
 
 if __name__ == "__main__":

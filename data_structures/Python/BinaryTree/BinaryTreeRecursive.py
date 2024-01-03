@@ -12,6 +12,9 @@ class BinaryTreeRecursive:
         def __str__(self):
             return str(self.obj)
 
+        def __repr__(self):
+            return f"Node {{obj: {str(self.obj)}}}"
+
     def __init__(self, *args):
         self._root: BinaryTreeRecursive._Node | None = None
         self._size: int = 0
@@ -19,13 +22,13 @@ class BinaryTreeRecursive:
             self.insert(arg)
 
     def __str__(self):
-        return f"BinaryTree [{', '.join(map(str, self.treeIterator()))}]"
+        return f"BinaryTree [{', '.join(map(str, self))}]"
 
     def __len__(self):
         return self._size
 
     def __iter__(self):
-        return self.treeIterator()
+        return self._treeIterator(self._root)
 
     def __contains__(self, obj):
         cur_node: BinaryTreeRecursive._Node | None = self._root
@@ -131,9 +134,6 @@ class BinaryTreeRecursive:
         yield from self._treeIterator(cur_node.left)
         yield cur_node.obj
         yield from self._treeIterator(cur_node.right)
-
-    def treeIterator(self):
-        return self._treeIterator(self._root)
 
 
 if __name__ == "__main__":

@@ -29,8 +29,8 @@ class BinaryTree:
         def __next__(self):
             if not self.stack:
                 raise StopIteration
-            cur_node = self.stack.pop()
 
+            cur_node = self.stack.pop()
             new_node = cur_node.right
             while new_node:
                 self.stack.append(new_node)
@@ -117,14 +117,14 @@ class BinaryTree:
         elif not cur_node.right:
             new_node = cur_node.left
         else:
-            min_node_parent = cur_node
-            min_node = cur_node.right
-            while min_node.left:
-                min_node_parent = min_node
-                min_node = min_node.left
-            cur_node.obj = min_node.obj
+            min_bigger_node_parent = cur_node
+            min_bigger_node = cur_node.right
+            while min_bigger_node.left:
+                min_bigger_node_parent = min_bigger_node
+                min_bigger_node = min_bigger_node.left
+            cur_node.obj = min_bigger_node.obj
             new_node = cur_node
-            self._replaceChild(min_node_parent, min_node, min_node.right)
+            self._replaceChild(min_bigger_node_parent, min_bigger_node, min_bigger_node.right)
         self._replaceChild(parent, cur_node, new_node)
         self._size -= 1
 

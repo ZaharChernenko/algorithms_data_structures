@@ -75,8 +75,10 @@ class BinaryTreeRecursive:
 
         # obj == cur_node.obj
         if not cur_node.left:
+            self._size -= 1
             return cur_node.right
         if not cur_node.right:
+            self._size -= 1
             return cur_node.left
 
         new_obj = self._findMin(cur_node.right)
@@ -86,7 +88,6 @@ class BinaryTreeRecursive:
 
     def remove(self, obj) -> None:
         self._root = self._remove(self._root, obj)
-        self._size -= 1
 
     def _discard(self, cur_node: BinaryTreeRecursive._Node | None, obj) -> BinaryTreeRecursive._Node | None:
         if not cur_node:

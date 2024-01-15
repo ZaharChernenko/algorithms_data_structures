@@ -30,7 +30,7 @@ class SingleLinkedList:
             if self.node:
                 temp = self.node
                 self.node = self.node.p_next
-                return temp
+                return temp.obj
             raise StopIteration
 
     def __init__(self, *args):
@@ -41,6 +41,9 @@ class SingleLinkedList:
             self.pushBack(arg)
 
     def __str__(self):
+        return f"[{', '.join(map(str, self))}]"
+
+    def __repr__(self):
         return f"SingleLinkedList [{', '.join(map(str, self))}]"
 
     def __len__(self):
@@ -207,8 +210,3 @@ class SingleLinkedList:
 
     def toList(self) -> list:
         return list(self)
-
-
-l = SingleLinkedList(1, 2, 3, 4)
-print(l.remove(5))
-print(l, len(l))

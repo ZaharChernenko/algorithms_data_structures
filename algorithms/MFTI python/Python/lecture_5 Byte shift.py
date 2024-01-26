@@ -62,7 +62,7 @@ def isPrime(num: int):
 def primesList(num: int) -> list:
     assert isinstance(num, int), "number must be integer"
 
-    arr = [True] * (num + 1)
+    arr = [True] * (num)
     for i in range(2, int(num ** 0.5) + 1):
         if arr[i]:
             for k in range(2 * i, len(arr), i):

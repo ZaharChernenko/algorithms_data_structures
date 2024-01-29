@@ -73,7 +73,7 @@ def lisSquare(seq) -> int:
 
 def lenLIS(seq) -> int:
     """
-    >>> lis([4, 5, 6, 1, 2, 3, 4])
+    >>> lenLIS([4, 5, 6, 1, 2, 3, 4])
     4
     """
     min_num = [float("inf")] * (len(seq) + 1)

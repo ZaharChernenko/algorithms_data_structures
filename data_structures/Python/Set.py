@@ -73,5 +73,5 @@ if __name__ == "__main__":
     for i in range(len(uniq)):
         uniq.remove(i)
     for j in range(100):
-        uniq.add([])
+        uniq.add(j)
     uniq.printBuckets()

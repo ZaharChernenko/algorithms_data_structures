@@ -64,8 +64,8 @@ def getParents(graph: list[list[int]], root: int) -> list[int]:
 def findShortestPath(graph: list[list[int]], start_vertex: int, end_vertex: int) -> list[int]:
     vertexes: deque[int] = deque([start_vertex])
     parents: list[int] = [-1] * len(graph)
-
     is_found: bool = False
+
     while vertexes and not is_found:
         cur_vertex = vertexes.popleft()
         for neig in graph[cur_vertex]:

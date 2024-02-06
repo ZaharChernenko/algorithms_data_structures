@@ -27,8 +27,8 @@ def dfs(now: int, graph: list[list[int]], visited: list[bool]):
 
 
 def countComp(graph) -> int:
-    visited = [False] * len(graph)
-    comp = 0
+    visited: list[bool] = [False] * len(graph)
+    comp: int = 0
     for vertex in range(len(graph)):
         if not visited[vertex]:
             dfs(vertex, graph, visited)
@@ -67,8 +67,8 @@ def kosaraju(graph: list[list[int]]) -> int:
     stack: list[int] = getStack(graph)[::-1]
     inverted_graph: list[list[int]] = invertGraph(graph)
     visited: list[bool] = [False] * len(graph)
-
     comp: int = 0
+
     for vertex in stack:
         if not visited[vertex]:
             dfs(vertex, inverted_graph, visited)

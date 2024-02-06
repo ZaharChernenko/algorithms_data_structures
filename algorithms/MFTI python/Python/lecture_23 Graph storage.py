@@ -4,7 +4,7 @@ from collections import defaultdict
 def createAdjMatrix(n_vertex: int, n_edges: int):
     from_index2name_arr: list[str | None] = [None] * n_vertex
     from_name2index_dict: dict[str, int] = {}
-    adj_matrix: list[list[bool]] = [[False] * n_edges for _ in range(n_vertex)]
+    adj_matrix: list[list[bool]] = [[False] * n_vertex for _ in range(n_vertex)]
 
     cur_index: int = 0
     for _ in range(n_edges):

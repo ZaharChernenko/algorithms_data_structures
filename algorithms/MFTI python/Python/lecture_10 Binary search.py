@@ -10,6 +10,7 @@ def binarySearch(arr: list, key):
 
 
 def lowerBound(arr: list, key) -> int:
+    """Return first element that less than key"""
     left, right = -1, len(arr)
 
     while left < right - 1:
@@ -22,6 +23,7 @@ def lowerBound(arr: list, key) -> int:
 
 
 def upperBound(arr: list, key) -> int:
+    """Return first element that greater than key"""
     left, right = -1, len(arr)
 
     while left < right - 1:

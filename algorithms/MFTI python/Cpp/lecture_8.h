@@ -66,19 +66,3 @@ std::vector<std::vector<int>> genDec(const std::vector<std::vector<int>>& arr2d)
     return prefix_arr;
 }
 
-
-int main() {
-    std::vector<std::vector<int>> dec_arr {genDec({{1, 2, 3}, {4, 5, 6}})};
-    std::vector<std::string> bin_arr {genBin(4)};
-    for (auto elem: bin_arr) {
-        std::cout << elem << ' ';
-    }
-    std::cout << '\n';
-
-    for (auto elem: dec_arr) {
-        for (auto d: elem) std::cout << d;
-        std::cout << '\n';
-    }
-    return 0;
-}
-

@@ -65,16 +65,3 @@ void countSort(std::vector<int>& arr) {
     arr = temp_arr;
 }
 
-
-int main() {
-    std::vector<int> vec {1, 2, 3, 4, 5};
-    std::reverse(vec.begin(), vec.end());
-    countSort(vec);
-
-    for (const auto& elem: vec) {
-        std::cout << elem << ' ';
-    }
-
-    return 0;
-}
-

@@ -10,7 +10,6 @@ void reverse(T& seq) {
 }
 
 
-
 template <class T>
 void moveLeft(T& seq) {
     auto temp = seq[0];
@@ -46,14 +45,5 @@ std::vector<bool> primesVector(int n) {
         }
     }
     return is_prime_vector;
-}
-
-
-int main() {
-    std::vector<bool> vec {primesVector(100)};
-    for (int i = 0; i != vec.size(); ++i) {
-        std::cout << i << ' ' << vec[i] << '\n';
-    }
-    return 0;
 }
 

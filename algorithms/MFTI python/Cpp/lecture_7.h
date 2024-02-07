@@ -46,9 +46,3 @@ int fasterGCD(int a, int b) {
     return fasterGCD(b, a % b);
 }
 
-
-int main() {
-    std::cout << fib(6);
-    return 0;
-}
-

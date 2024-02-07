@@ -1,5 +1,4 @@
 #include <algorithm>
-#include <iostream>
 #include <string>
 #include <unordered_map>
 
@@ -32,11 +31,5 @@ std::string changeBase(const std::string& num, int wanted_base = 2, int cur_base
     }
     std::reverse(res.begin(), res.end());
     return res;
-}
-
-
-int main() {
-    std::cout << changeBase("15", 16, 10);
-    return 0;
 }
 

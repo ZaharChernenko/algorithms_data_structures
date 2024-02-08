@@ -1,5 +1,6 @@
+#include <algorithm>
 #include <cstddef>
-#include <regex>
+#include <limits>
 #include <vector>
 
 
@@ -105,3 +106,15 @@ int countWaysBool(const int& n, const std::vector<bool>& allowed) {
     return ways_arr[n];
 }
 
+
+int countMinCost(const int& n, const std::vector<int>& prices_arr) {
+    // минимальная стоимость посещения точки n из точки 1
+    std::vector<int> costs_arr {std::vector(n + 1, 0)};
+    costs_arr[0] = std::numeric_limits<int>::max();
+
+    for (int i = 2; i < n + 1; ++i) {
+        costs_arr[i] = std::min(costs_arr[i - 1] + prices_arr[i - 2], costs_arr[i - 2] + prices_arr[i - 2]);
+    }
+
+    return costs_arr[n];
+}

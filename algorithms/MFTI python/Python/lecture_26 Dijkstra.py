@@ -13,7 +13,7 @@ def dijkstra(graph: list[list[int | float]], start_vertex: int, end_vertex: int)
     distances[start_vertex - 1] = 0
 
     while vertexes:
-        cur_vertex = heapq.heappop(vertexes)
+        cur_vertex: Vertex = heapq.heappop(vertexes)
 
         if cur_vertex.distance > distances[cur_vertex.vertex]:
             continue

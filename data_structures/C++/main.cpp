@@ -1,10 +1,10 @@
-#include <iostream>
 #include "BinaryTree.h"
+#include "Queue.h"
+#include <iostream>
 using std::cin, std::cout;
 
-
 int main() {
-    BinaryTree<int> tree {42, 2, 3, 59};
-    cout << tree << ' ' << tree.size() << '\n';
+    Queue<int> q {10, 2, 3, 5};
+    cout << q << ' ' << q.size() << '\n';
     return 0;
 }

@@ -17,8 +17,7 @@ def dijkstraGreedy(graph: list[list[int]], start_vertex: int, end_vertex: int) -
 
         for neig, weight in enumerate(graph[cur_vertex]):
             new_distance: int | float = distances[cur_vertex] + weight
-            if new_distance < distances[neig]:
-                distances[neig] = new_distance
+            distances[neig] = min(distances[neig], new_distance)
 
         visited[cur_vertex] = True
 

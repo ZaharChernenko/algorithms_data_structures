@@ -11,7 +11,7 @@ class SingleLinkedList {
         T value;
         Node* next;
 
-        Node(T value, Node* next = nullptr);
+        Node(const T& value, Node* next = nullptr);
     };
 
     std::size_t _size;
@@ -19,6 +19,9 @@ class SingleLinkedList {
     Node* _back;
 
   public:
+    class iterator;
+    class const_iterator;
+
     class iterator {
         using iterator_category = std::forward_iterator_tag; // можно писать typedef
         using difference_type = std::ptrdiff_t;              // но он устарел
@@ -31,12 +34,38 @@ class SingleLinkedList {
 
       public:
         iterator(Node* ptr);
+        iterator(const iterator& other);
+        iterator(const const_iterator& other);
 
         T& operator*();
         T* operator->();
         iterator& operator++();
+        [[nodiscard]] iterator operator++(int); // здесь вызывается копирование, поэтому ссылка не нужна
         bool operator==(const iterator& other) const;
         bool operator!=(const iterator& other) const;
+    };
+
+    class const_iterator {
+        using iterator_category = std::output_iterator_tag;
+        using difference_type = std::ptrdiff_t;
+        using value_type = T;
+        using pointer = T*;
+        using reference = T&;
+
+      protected:
+        Node* ptr;
+
+      public:
+        const_iterator(Node* ptr);
+        const_iterator(const iterator& other);
+        const_iterator(const const_iterator& other);
+
+        const T& operator*();
+        const T* operator->();
+        const_iterator& operator++();
+        [[nodiscard]] const_iterator operator++(int); // здесь вызывается копирование, поэтому ссылка не нужна
+        bool operator==(const const_iterator& other) const;
+        bool operator!=(const const_iterator& other) const;
     };
 
     SingleLinkedList();
@@ -46,26 +75,36 @@ class SingleLinkedList {
     template <class T1> // дружественные функции необходимо объявлять шаблонными у шаблонного класса
     friend std::ostream& operator<<(std::ostream& os, const SingleLinkedList<T1>& list);
 
-    iterator begin();
-    iterator end();
+    [[nodiscard]] iterator begin() const;
+    [[nodiscard]] iterator end() const;
+    [[nodiscard]] const_iterator cbegin() const;
+    [[nodiscard]] const_iterator cend() const;
     [[nodiscard]] std::size_t size() const;
     [[nodiscard]] bool empty() const;
-    T& front();
-    T& front() const;
-    T& back();
-    T& back() const;
+    [[nodiscard]] T& front(); // т.к. эту функцию можно использовать для записи, метод non-const
+    [[nodiscard]] T& front() const;
+    [[nodiscard]] T& back();
+    [[nodiscard]] T& back() const;
 
-    void push_front(T value);
-    void push_back(T value);
+    void push_front(const T& value);
+    void push_back(const T& value);
     void pop_front();
     void pop_back();
 };
 
+// Node
 template <class T> // если не определить то будет warning, что конструктор неопределен
-SingleLinkedList<T>::Node::Node(T value, Node* next) : value {value}, next {next} {}
+SingleLinkedList<T>::Node::Node(const T& value, Node* next) : value {value}, next {next} {}
 
+// iterator
 template <class T>
 SingleLinkedList<T>::iterator::iterator(Node* ptr) : ptr {ptr} {}
+
+template <class T>
+SingleLinkedList<T>::iterator::iterator(const iterator& other) : ptr {other.ptr} {}
+
+template <class T>
+SingleLinkedList<T>::iterator::iterator(const const_iterator& other) : ptr {other.ptr} {}
 
 template <class T>
 T& SingleLinkedList<T>::iterator::operator*() {
@@ -84,15 +123,66 @@ SingleLinkedList<T>::iterator& SingleLinkedList<T>::iterator::operator++() {
 }
 
 template <class T>
+SingleLinkedList<T>::iterator SingleLinkedList<T>::iterator::operator++(int) {
+    iterator temp {*this};
+    ptr = ptr->next;
+    return temp;
+}
+
+template <class T>
 bool SingleLinkedList<T>::iterator::operator==(const iterator& other) const {
-    return this->ptr == other.ptr;
+    return ptr == other.ptr;
 }
 
 template <class T>
 bool SingleLinkedList<T>::iterator::operator!=(const iterator& other) const {
-    return this->ptr != other.ptr;
+    return ptr != other.ptr;
 }
 
+// const_iterator
+template <class T>
+SingleLinkedList<T>::const_iterator::const_iterator(Node* ptr) : ptr {ptr} {}
+
+template <class T>
+SingleLinkedList<T>::const_iterator::const_iterator(const iterator& other) : ptr {other.ptr} {}
+
+template <class T>
+SingleLinkedList<T>::const_iterator::const_iterator(const const_iterator& other) : ptr {other.ptr} {}
+
+template <class T>
+const T& SingleLinkedList<T>::const_iterator::operator*() {
+    return ptr->value;
+}
+
+template <class T>
+const T* SingleLinkedList<T>::const_iterator::operator->() {
+    return &(ptr->value);
+}
+
+template <class T>
+SingleLinkedList<T>::const_iterator& SingleLinkedList<T>::const_iterator::operator++() {
+    ptr = ptr->next;
+    return *this;
+}
+
+template <class T>
+SingleLinkedList<T>::const_iterator SingleLinkedList<T>::const_iterator::operator++(int) {
+    const_iterator temp {*this};
+    ptr = ptr->next;
+    return temp;
+}
+
+template <class T>
+bool SingleLinkedList<T>::const_iterator::operator==(const const_iterator& other) const {
+    return ptr == other.ptr;
+}
+
+template <class T>
+bool SingleLinkedList<T>::const_iterator::operator!=(const const_iterator& other) const {
+    return ptr != other.ptr;
+}
+
+// SingleLinkedList
 template <class T>
 SingleLinkedList<T>::SingleLinkedList() : _front {nullptr}, _back {nullptr}, _size {0} {};
 
@@ -113,13 +203,23 @@ SingleLinkedList<T>::~SingleLinkedList() {
 }
 
 template <class T>
-SingleLinkedList<T>::iterator SingleLinkedList<T>::begin() {
+SingleLinkedList<T>::iterator SingleLinkedList<T>::begin() const {
     return iterator(_front);
 }
 
 template <class T>
-SingleLinkedList<T>::iterator SingleLinkedList<T>::end() {
+SingleLinkedList<T>::iterator SingleLinkedList<T>::end() const {
     return iterator(nullptr);
+}
+
+template <class T>
+SingleLinkedList<T>::const_iterator SingleLinkedList<T>::cbegin() const {
+    return const_iterator(_front);
+}
+
+template <class T>
+SingleLinkedList<T>::const_iterator SingleLinkedList<T>::cend() const {
+    return const_iterator(nullptr);
 }
 
 template <class T1>
@@ -172,7 +272,7 @@ T& SingleLinkedList<T>::back() const {
 }
 
 template <class T>
-void SingleLinkedList<T>::push_front(T value) {
+void SingleLinkedList<T>::push_front(const T& value) {
     _front = new Node(value, _front);
     if (_back == nullptr)
         _back = _front;
@@ -180,7 +280,7 @@ void SingleLinkedList<T>::push_front(T value) {
 }
 
 template <class T>
-void SingleLinkedList<T>::push_back(T value) {
+void SingleLinkedList<T>::push_back(const T& value) {
     if (_back == nullptr)
         _front = _back = new Node(value);
     else {

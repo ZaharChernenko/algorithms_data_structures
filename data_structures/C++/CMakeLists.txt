@@ -1,12 +1,7 @@
-cmake_minimum_required(VERSION 3.0.0)
-project(test VERSION 0.1.0 LANGUAGES C CXX)
+cmake_minimum_required(VERSION 3.27)
+project(test)
 
-include(CTest)
-enable_testing()
+set(CMAKE_CXX_STANDARD 20)
 
-add_executable(main main.cpp
-        Queue.h)
-
-set(CPACK_PROJECT_NAME ${PROJECT_NAME})
-set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
-include(CPack)
+add_executable(test main.cpp
+        SingleLinkedList.h)

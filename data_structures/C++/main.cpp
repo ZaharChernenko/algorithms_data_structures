@@ -1,17 +1,42 @@
 #include "SingleLinkedList.h"
+#include <chrono>
+#include <forward_list>
 #include <iostream>
-#include <list>
-#include <utility>
-using std::cin, std::cout;
+
+using std::cout;
 
 int main() {
-    SingleLinkedList<std::pair<int, int>> q {{1, 2}, {3, 3}, {4, 4}};
-    std::list<int> l;
-    auto f {q.cbegin()};
-    // f->first = 25;
+    std::chrono::steady_clock::time_point start {std::chrono::steady_clock::now()};
+    SingleLinkedList<int> my_l;
+    for (int i {0}; i != 10000; ++i)
+        my_l.push_front(i);
+    for (int i {0}; i != 10000; ++i)
+        my_l.pop_front();
+    SingleLinkedList<int>::const_iterator my_start {my_l.before_begin()};
+    for (int i {0}; i != 10000; ++i)
+        my_l.insert_after(my_start, i);
 
-    for (; f != q.cend(); ++f) {
-        std::cout << f->first << ' ';
+    cout << "Время моего списка: "
+         << std::chrono::duration<double, std::milli>(std::chrono::steady_clock::now() - start).count() << '\n';
+
+    start = std::chrono::steady_clock::now();
+    std::forward_list<int> std_l;
+    for (int i {0}; i != 10000; ++i)
+        std_l.push_front(i);
+    for (int i {0}; i != 10000; ++i)
+        std_l.pop_front();
+    std::forward_list<int>::const_iterator std_start {std_l.before_begin()};
+    for (int i {0}; i != 10000; ++i)
+        std_l.insert_after(std_start, i);
+
+    cout << "Время библиотеки: "
+         << std::chrono::duration<double, std::milli>(std::chrono::steady_clock::now() - start).count() << '\n';
+
+    std::forward_list<int>::const_iterator std_it {std_l.cbegin()};
+    for (SingleLinkedList<int>::const_iterator my_it {my_l.cbegin()}; my_it != my_l.cend(); ++my_it, ++std_it) {
+        if (*my_it != *std_it)
+            cout << "ahtung!";
     }
+
     return 0;
 }

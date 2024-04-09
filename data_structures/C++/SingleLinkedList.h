@@ -6,7 +6,7 @@
 #include <ostream>
 #include <stdexcept>
 
-// #define DEBUG
+#define DEBUG
 
 template <class T>
 class SingleLinkedList {
@@ -82,8 +82,11 @@ class SingleLinkedList {
     SingleLinkedList(std::initializer_list<T> list);
     SingleLinkedList(const SingleLinkedList<T>& other);
     SingleLinkedList(const std::size_t& size, const T& default_value = {});
+    SingleLinkedList(SingleLinkedList<T>&& other);
     ~SingleLinkedList();
 
+    SingleLinkedList<T>& operator=(const SingleLinkedList<T>& other);
+    SingleLinkedList<T>& operator=(SingleLinkedList<T>&& other);
     [[nodiscard]] T& operator[](std::size_t index);
     // нужен для передачи SingleLinkedList<T> const & list (когда нельзя изменять ячейки)
     [[nodiscard]] const T& operator[](std::size_t index) const;
@@ -110,6 +113,8 @@ class SingleLinkedList {
     void pop_back();
     void insert_after(const iterator& it, const T& value);
     void insert_after(const const_iterator& it, const T& value);
+    void erase_after(const iterator& it);
+    void erase_after(const const_iterator& it);
     void reverse();
 };
 
@@ -244,6 +249,17 @@ SingleLinkedList<T>::SingleLinkedList(const std::size_t& size, const T& default_
 }
 
 template <class T>
+SingleLinkedList<T>::SingleLinkedList(SingleLinkedList<T>&& other)
+    : _size {other._size}, _before_front {other._before_front}, _back {other._back} {
+    other._before_front = new Node({});
+    other._back = nullptr;
+    other._size = 0;
+#ifdef DEBUG
+    std::cout << "moving constructor was called\n";
+#endif
+}
+
+template <class T>
 SingleLinkedList<T>::~SingleLinkedList() {
     Node* next;
     while (_before_front) {
@@ -254,6 +270,41 @@ SingleLinkedList<T>::~SingleLinkedList() {
 #ifdef DEBUG
     std::cout << "destructor was called\n";
 #endif
+}
+
+template <class T>
+SingleLinkedList<T>& SingleLinkedList<T>::operator=(const SingleLinkedList<T>& other) {
+    _size = 0;
+    Node* next;
+    while (_before_front->next) {
+        next = _before_front->next->next;
+        delete _before_front->next;
+        _before_front->next = next;
+    }
+    _back = nullptr;
+
+    for (const T& el : other)
+        push_back(el);
+
+    return *this;
+}
+
+template <class T>
+SingleLinkedList<T>& SingleLinkedList<T>::operator=(SingleLinkedList<T>&& other) {
+    Node* next;
+    while (_before_front) {
+        next = _before_front->next;
+        delete _before_front;
+        _before_front = next;
+    }
+
+    _before_front = other._before_front;
+    _back = other._back;
+    _size = other._size;
+
+    other._before_front = new Node({});
+    other._back = nullptr;
+    other._size = 0;
 }
 
 template <class T>
@@ -420,11 +471,33 @@ void SingleLinkedList<T>::pop_back() {
 template <class T>
 void SingleLinkedList<T>::insert_after(const iterator& it, const T& value) {
     it.ptr->next = new Node(value, it.ptr->next);
+    if (it.ptr == _back)
+        _back = it.ptr->next;
+    ++_size;
 }
 
 template <class T>
 void SingleLinkedList<T>::insert_after(const const_iterator& it, const T& value) {
     it.ptr->next = new Node(value, it.ptr->next);
+    if (it.ptr == _back)
+        _back = it.ptr->next;
+    ++_size;
+}
+
+template <class T>
+void SingleLinkedList<T>::erase_after(const iterator& it) {
+    Node* temp {it.ptr->next};
+    it.ptr->next = it.ptr->next->next;
+    delete temp;
+    --_size;
+}
+
+template <class T>
+void SingleLinkedList<T>::erase_after(const const_iterator& it) {
+    Node* temp {it.ptr->next};
+    it.ptr->next = it.ptr->next->next;
+    delete temp;
+    --_size;
 }
 
 template <class T>

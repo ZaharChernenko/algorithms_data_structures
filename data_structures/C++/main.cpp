@@ -5,6 +5,13 @@
 
 using std::cout;
 
+SingleLinkedList<int> list5() {
+    SingleLinkedList<int> temp;
+    for (int i {0}; i != 5; ++i)
+        temp.push_back(i);
+    return temp;
+}
+
 int main() {
     std::chrono::steady_clock::time_point start {std::chrono::steady_clock::now()};
     SingleLinkedList<int> my_l;
@@ -38,5 +45,13 @@ int main() {
             cout << "ahtung!";
     }
 
+    SingleLinkedList<int> test1 {4, 3, 2, 1}, test2 {2, 3, 4, 5};
+    SingleLinkedList<int> test3 = test1 = test2; // для test1 вызвался оператор присваивания,
+                                                 // а для test3 конструктор копирования
+
+    cout << test3 << '\n';
+
+    SingleLinkedList<int> test4 = list5();
+    cout << test4 << '\n';
     return 0;
 }

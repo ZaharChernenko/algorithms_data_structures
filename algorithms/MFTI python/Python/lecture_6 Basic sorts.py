@@ -14,7 +14,7 @@ def choiceSort(arr: list) -> list:
     """Сортировка выбором"""
     temp_arr = arr[:]
 
-    for pos in range(len(arr)):
+    for pos in range(len(arr) - 1):
         for i in range(pos + 1, len(arr)):
             if temp_arr[pos] > temp_arr[i]:
                 temp_arr[pos], temp_arr[i] = temp_arr[i], temp_arr[pos]
@@ -42,7 +42,8 @@ def bubbleSortCheck(arr: list) -> list:
             if temp_arr[i - 1] > temp_arr[i]:
                 temp_arr[i - 1], temp_arr[i] = temp_arr[i], temp_arr[i - 1]
                 is_sorted = False
-        if is_sorted: break
+        if is_sorted:
+            break
     return temp_arr
 
 
@@ -87,4 +88,3 @@ test(bubbleSort)
 test(bubbleSortCheck)
 test(countSort)
 test(sorted)
-

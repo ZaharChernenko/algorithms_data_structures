@@ -1,37 +1,42 @@
-def binarySearch(arr: list, key):
+def binarySearch[T](arr: list[T], val: T) -> int:
     left, right = -1, len(arr)
-    while left < right - 1:
-        middle = (left + right) // 2
-        if arr[middle] < key:
+
+    while left + 1 < right:
+        middle: int = (left + right) >> 1
+        if arr[middle] < val:
             left = middle
         else:
             right = middle
-    return -1 if right == len(arr) or arr[right] != key else right
+
+    return -1 if right == len(arr) or arr[right] != val else right
 
 
-def lowerBound(arr: list, key) -> int:
-    """Return first element that less than key"""
+def lowerBound[T](arr: list[T], val: T) -> int:
+    """Возвращает индекс первого элемента, который либо больше val,
+    либо равен ему (первый индекс для вставки в отсортированном массиве)"""
     left, right = -1, len(arr)
 
-    while left < right - 1:
-        middle = (left + right) // 2
-        if arr[middle] < key:
+    while left + 1 < right:
+        middle: int = (left + right) >> 1
+        if arr[middle] < val:
             left = middle
         else:
             right = middle
     return right
 
 
-def upperBound(arr: list, key) -> int:
-    """Return first element that greater than key"""
+def upperBound[T](arr: list[T], val: T) -> int:
+    """Возвращает индекс первого элемента, который строго больше val,
+    (последний индекс для вставки в отсортированный массив)"""
     left, right = -1, len(arr)
 
-    while left < right - 1:
-        middle = (left + right) // 2
-        if arr[middle] <= key:
-            left = middle
-        else:
+    while left + 1 < right:
+        middle: int = (left + right) >> 1
+        if arr[middle] > val:
             right = middle
+        else:
+            left = middle
+
     return right
 
 

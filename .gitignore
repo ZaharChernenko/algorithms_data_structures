@@ -202,4 +202,3 @@ cython_debug/
 out
 x64
 cmake-build-debug
-test.*

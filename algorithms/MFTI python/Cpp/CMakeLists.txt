@@ -1,14 +1,27 @@
-cmake_minimum_required(VERSION 3.26)
-project(lecture_3_Horner_circuit)
+cmake_minimum_required(VERSION 3.10)
+project(algorithms)
+set(CMAKE_CXX_STANDARD 20)
 
-set(CMAKE_CXX_STANDARD 17)
+find_package(absl REQUIRED)
 
-add_executable(lecture_3_Horner_circuit lecture_3.h
-        main.cpp
-        lecture_5.h
-        lecture_6.h
-        lecture_7.h
-        lecture_8.h
-        lecture_9.h
-        lecture_10.h
-        queue.h)
+add_executable(
+    algorithms
+    "lecture_3 Horner circuit.cpp"
+    test.cpp
+)
+
+include(FetchContent)
+FetchContent_Declare(
+  googletest
+  URL https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4be3799d395.zip
+)
+FetchContent_MakeAvailable(googletest)
+
+target_link_libraries(
+    algorithms
+    GTest::gtest_main
+    absl::strings 
+)
+
+include(GoogleTest)
+gtest_discover_tests(algorithms)

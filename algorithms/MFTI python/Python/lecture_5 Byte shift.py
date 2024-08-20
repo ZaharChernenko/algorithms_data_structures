@@ -1,21 +1,6 @@
-"""
->>> arr = [1, 2, 3]
->>> reverseList(arr)
-[3, 2, 1]
->>> arr.append(23)
->>> reverseList(arr)
-[23, 3, 2, 1]
->>> arr
-[1, 2, 3, 23]
->>> moveLeft(arr)
-[2, 3, 23, 1]
->>> moveRight(arr)
-[23, 1, 2, 3]
-"""
-
-
 def reverseList(arr: list) -> list:
-    """function that returns reversed list
+    """
+    function that returns reversed list
     >>> reverseList([5, 4, 3, 2, 1])
     [1, 2, 3, 4, 5]
     """
@@ -27,52 +12,62 @@ def reverseList(arr: list) -> list:
 
 
 def moveLeft(arr: list) -> list:
-    """function that returns arr shifted to left"""
+    """
+    function that returns arr shifted to left
+    >>> moveLeft([1, 2, 3])
+    [2, 3, 1]
+    >>> moveLeft([1])
+    [1]
+    """
     assert isinstance(arr, list), "arr must be type list"
-    temp_arr = arr[:]
+    shifted_arr = arr[:]
     stash = arr[0]
 
     for i in range(len(arr) - 1):
-        temp_arr[i] = temp_arr[i + 1]
-    temp_arr[-1] = stash
-    return temp_arr
+        shifted_arr[i] = shifted_arr[i + 1]
+    shifted_arr[-1] = stash
+    return shifted_arr
 
 
 def moveRight(arr: list) -> list:
-    """function that returns arr shifted to right"""
+    """
+    function that returns arr shifted to right
+    >>> moveRight([1, 2, 3])
+    [3, 1, 2]
+    """
     assert isinstance(arr, list), "arr must be type list"
-    temp_arr = arr[:]
+    shifted_arr = arr[:]
     stash = arr[-1]
 
-    for i in range(len(arr) - 1, 0, -1):
-        temp_arr[i] = temp_arr[i - 1]
-    temp_arr[0] = stash
-    return temp_arr
+    for i in range(len(arr) - 2, -1, -1):
+        shifted_arr[i + 1] = shifted_arr[i]
+    shifted_arr[0] = stash
+    return shifted_arr
 
 
-def isPrime(num: int):
+def isPrime(num: int) -> bool:
     assert isinstance(num, int), "number must be integer"
 
-    for i in range(2, int(num ** 0.5) + 1):
-        if num % i == 0:
+    for delimeter in range(2, int(num**0.5) + 1):
+        if not num % delimeter:
             return False
     return True
 
 
-def primesList(num: int) -> list:
-    assert isinstance(num, int), "number must be integer"
+def primesList(upper_bound: int) -> list[int]:
+    primes_list: list[int] = [True] * (upper_bound + 1)
+    primes_list[0] = primes_list[1] = False
 
-    arr = [True] * (num)
-    for i in range(2, int(num ** 0.5) + 1):
-        if arr[i]:
-            for k in range(2 * i, len(arr), i):
-                arr[k] = False
-    for digit, is_prime in enumerate(arr):
-        if is_prime:
-            print(digit)
-    return arr
+    for i in range(2, int(len(primes_list) ** 0.5) + 1):
+        if primes_list[i]:
+            for j in range(i**2, len(primes_list), i):  # число со вторым множителем, меньшим чем i уже отсеялось
+                primes_list[j] = False
+
+    return [num for num in range(upper_bound + 1) if primes_list[num]]
 
 
 if __name__ == "__main__":
     import doctest
+
     doctest.testmod(verbose=True)
+    print(primesList(1000))

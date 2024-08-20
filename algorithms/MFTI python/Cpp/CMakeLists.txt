@@ -6,7 +6,6 @@ find_package(absl REQUIRED)
 
 add_executable(
     algorithms
-    "lecture_3 Horner circuit.cpp"
     test.cpp
 )
 

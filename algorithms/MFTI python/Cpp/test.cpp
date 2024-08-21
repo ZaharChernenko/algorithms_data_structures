@@ -1,5 +1,6 @@
 #include "lecture_3 Horner circuit.h"
 #include "lecture_5 Byte shift.h"
+#include "lecture_6.h"
 #include <gtest/gtest.h>
 #include <vector>
 
@@ -57,4 +58,69 @@ TEST(math, primesArr) {
     EXPECT_EQ(result, std::vector({2, 3, 5, 7, 11}));
 
     delete[] primes_arr;
+}
+
+TEST(sorts, insertSort) {
+    std::vector<int> arr {3, 2, 1};
+    insertSort(arr);
+    EXPECT_EQ(arr, std::vector({1, 2, 3}));
+
+    arr = {0};
+    insertSort(arr);
+    EXPECT_EQ(arr, std::vector({0}));
+
+    arr.clear();
+    insertSort(arr);
+}
+
+TEST(sorts, searchSort) {
+    std::vector<int> arr {3, 2, 1};
+    searchSort(arr);
+    EXPECT_EQ(arr, std::vector({1, 2, 3}));
+
+    arr = {0};
+    searchSort(arr);
+    EXPECT_EQ(arr, std::vector({0}));
+
+    arr.clear();
+    searchSort(arr);
+}
+
+TEST(sorts, bubbleSort) {
+    std::vector<int> arr {3, 2, 1};
+    bubbleSort(arr);
+    EXPECT_EQ(arr, std::vector({1, 2, 3}));
+
+    arr = {0};
+    bubbleSort(arr);
+    EXPECT_EQ(arr, std::vector({0}));
+
+    arr.clear();
+    bubbleSort(arr);
+}
+
+TEST(sorts, bubbleSortWithSortCheck) {
+    std::vector<int> arr {3, 2, 1};
+    bubbleSortWithSortCheck(arr);
+    EXPECT_EQ(arr, std::vector({1, 2, 3}));
+
+    arr = {0};
+    bubbleSortWithSortCheck(arr);
+    EXPECT_EQ(arr, std::vector({0}));
+
+    arr.clear();
+    bubbleSortWithSortCheck(arr);
+}
+
+TEST(sorts, countSort) {
+    std::vector<int> arr {3, 2, 1};
+    countSort(arr);
+    EXPECT_EQ(arr, std::vector({1, 2, 3}));
+
+    arr = {0};
+    countSort(arr);
+    EXPECT_EQ(arr, std::vector({0}));
+
+    arr.clear();
+    countSort(arr);
 }

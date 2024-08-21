@@ -1,90 +1,92 @@
-def insertSort(arr: list) -> list:
+def insertSort[T](arr: list[T]) -> list[T]:
     """Сортировка вставками"""
-    temp_arr = arr[:]
-
-    for top in range(1, len(arr)):
-        i = top
-        while i > 0 and temp_arr[i - 1] > temp_arr[i]:
+    temp_arr: list[T] = arr.copy()
+    for top in range(1, len(temp_arr)):
+        for i in range(top, 0, -1):
+            if temp_arr[i - 1] <= temp_arr[i]:
+                break
             temp_arr[i - 1], temp_arr[i] = temp_arr[i], temp_arr[i - 1]
-            i -= 1
+
     return temp_arr
 
 
-def choiceSort(arr: list) -> list:
+def choiceSort[T](arr: list[T]) -> list[T]:
     """Сортировка выбором"""
-    temp_arr = arr[:]
+    temp_arr: list[T] = arr.copy()
+    for pos in range(len(temp_arr)):
+        for i in range(pos + 1, len(temp_arr)):
+            if temp_arr[i] < temp_arr[pos]:
+                temp_arr[i], temp_arr[pos] = temp_arr[pos], temp_arr[i]
 
-    for pos in range(len(arr) - 1):
-        for i in range(pos + 1, len(arr)):
-            if temp_arr[pos] > temp_arr[i]:
-                temp_arr[pos], temp_arr[i] = temp_arr[i], temp_arr[pos]
     return temp_arr
 
 
-def bubbleSort(arr: list) -> list:
+def bubbleSort[T](arr: list[T]) -> list[T]:
     """Сортировка пузырьком"""
-    temp_arr = arr[:]
-
-    for bypass in range(len(arr) - 1):
-        for i in range(1, len(arr) - bypass):
+    temp_arr: list[T] = arr.copy()
+    for bypass in range(len(temp_arr) - 1):
+        for i in range(1, len(temp_arr) - bypass):
             if temp_arr[i - 1] > temp_arr[i]:
                 temp_arr[i - 1], temp_arr[i] = temp_arr[i], temp_arr[i - 1]
+
     return temp_arr
 
 
-def bubbleSortCheck(arr: list) -> list:
+def bubbleSortWithSortCheck[T](arr: list[T]) -> list[T]:
     """Сортировка пузырьком с проверкой на упорядоченность"""
-    temp_arr = arr[:]
-
-    for bypass in range(len(arr) - 1):
-        is_sorted = True
-        for i in range(1, len(arr) - bypass):
+    temp_arr: list[T] = arr.copy()
+    for bypass in range(len(temp_arr) - 1):
+        is_sorted: bool = True
+        for i in range(1, len(temp_arr) - bypass):
             if temp_arr[i - 1] > temp_arr[i]:
-                temp_arr[i - 1], temp_arr[i] = temp_arr[i], temp_arr[i - 1]
                 is_sorted = False
+                temp_arr[i - 1], temp_arr[i] = temp_arr[i], temp_arr[i - 1]
         if is_sorted:
             break
+
     return temp_arr
 
 
-def countSort(arr: list) -> list:
+def countSort(arr: list[int]) -> list[int]:
     """Сортировка подсчетом"""
-    size = max(arr) + 1
-    count_arr = [0] * size
-    pos_arr = [0] * size
-
+    pos_arr: list[int] = [0] * (max(arr) + 1)
     for elem in arr:
-        count_arr[elem] += 1
-    for i in range(1, size):
-        pos_arr[i] = pos_arr[i - 1] + count_arr[i - 1]
+        pos_arr[elem] += 1
 
-    temp_arr = [0] * len(arr)
+    prev_pos: int = 0
+    prev_count: int = 0
+    for i in range(len(pos_arr)):
+        prev_pos = cur_pos = prev_pos + prev_count
+        prev_count = pos_arr[i]
+        pos_arr[i] = cur_pos
+
+    temp_arr: list[int] = [0] * len(arr)
     for elem in arr:
         temp_arr[pos_arr[elem]] = elem
         pos_arr[elem] += 1
+
     return temp_arr
 
 
-def test(func):
-    import time
-    print(func.__doc__)
-    start = time.time_ns()
+if __name__ == "__main__":
+    import timeit
 
-    arr = [5, 3, 4, 3, 2, 1]
-    print("test №1: " "ok" if func(arr) == [1, 2, 3, 3, 4, 5] else "fail")
+    def test(func: "function"):
+        print(func.__doc__)
+        measureSort(func, list(range(1000, 2000)) + list(range(1000)), list(range(2000)))
+        measureSort(func, [3, 2, 1], [1, 2, 3])
+        measureSort(func, list(range(10_000, -1, -1)), list(range(10_001)))
+        print()
 
-    arr = list(range(10, 2000)) + list(range(10))
-    print("test №2: " "ok" if func(arr) == list(range(2000)) else "fail")
+    def measureSort[T](func, cur_arr: list[T], correct_arr: list[T]):
+        start: int = timeit.time.time_ns()
+        cur_arr = func(cur_arr)
+        print("time: ", timeit.time.time_ns() - start)
+        assert cur_arr == correct_arr
 
-    arr = [1] * 2000
-    print("test №3: " "ok" if func(arr) == arr else "fail")
-
-    print(time.time_ns() - start, '\n')
-
-
-test(insertSort)
-test(choiceSort)
-test(bubbleSort)
-test(bubbleSortCheck)
-test(countSort)
-test(sorted)
+    test(insertSort)
+    test(choiceSort)
+    test(bubbleSort)
+    test(bubbleSortWithSortCheck)
+    test(countSort)
+    test(sorted)

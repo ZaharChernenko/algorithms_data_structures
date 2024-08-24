@@ -1,6 +1,7 @@
 #include "lecture_3 Horner circuit.h"
 #include "lecture_5 Byte shift.h"
-#include "lecture_6.h"
+#include "lecture_6 Basic sorts.h"
+#include "lecture_8 Generate permutations.h"
 #include <gtest/gtest.h>
 #include <vector>
 
@@ -123,4 +124,11 @@ TEST(sorts, countSort) {
 
     arr.clear();
     countSort(arr);
+}
+
+TEST(lecture_8, genDec) {
+    std::vector<std::vector<int>> sets {{1, 2}, {3, 4}};
+    std::vector<std::vector<int>> result {{1, 3}, {1, 4}, {2, 3}, {2, 4}};
+    EXPECT_EQ(genDecIterative(sets), result);
+    EXPECT_EQ(genDecRecurisive(sets), genDecIterative(sets));
 }

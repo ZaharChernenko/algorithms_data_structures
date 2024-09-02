@@ -2,8 +2,7 @@ from bisect import bisect_left
 
 
 def findWaysNum(n: int, m: int) -> int:
-    ways_matrix = [[1] * m if i == 0 else [1] +
-                   [0] * (m - 1) for i in range(n)]
+    ways_matrix = [[1] * m if i == 0 else [1] + [0] * (m - 1) for i in range(n)]
     for i in range(1, n):
         for j in range(1, n):
             ways_matrix[i][j] = ways_matrix[i - 1][j] + ways_matrix[i][j - 1]
@@ -87,33 +86,33 @@ def lenLIS(seq) -> int:
     return length
 
 
-def lis(seq) -> list:
-    min_num_arr = [float("inf")] * (len(seq) + 1)
-    min_num_arr[0] = float("-inf")
-    length = 0
+def LIS[T](sequence: list[T]) -> list[T]:
+    lis_arr: list[int | float] = [float("inf")] * (len(sequence) + 1)
+    lis_arr[0] = float("-inf")
+    prev_arr: list[int | float] = [float("-inf")] * len(sequence)
+    length: int = 0
 
-    """Эти массивы нужны для восстановления"""
-    pos_arr = [0] * (len(seq) + 1)
-    pos_arr[0] = -1
-    prev_arr = [0] * len(seq)
-
-    for i in range(len(seq)):
-        ge_index = bisect_left(min_num_arr, seq[i])
-        if min_num_arr[ge_index - 1] < seq[i] < min_num_arr[ge_index]:
-            min_num_arr[ge_index] = seq[i]
+    for i in range(len(sequence)):
+        # значение, которое вернет key, будет сравниваться с val
+        ge_index: int = bisect_left(
+            lis_arr, sequence[i], key=lambda index: index if abs(index) == float("inf") else sequence[index]
+        )
+        if lis_arr[ge_index] == float("inf") or sequence[i] < sequence[lis_arr[ge_index]]:
+            lis_arr[ge_index] = i
+            prev_arr[i] = lis_arr[ge_index - 1]
             length = max(length, ge_index)
-            pos_arr[ge_index] = i
-            prev_arr[i] = pos_arr[ge_index - 1]
 
-    res = []
-    end = pos_arr[length]
-    while end != -1:
-        res.append(seq[end])
-        end = prev_arr[end]
-    return res[::-1]
+    result: list[T | None] = [None] * length
+    seq_index: int = lis_arr[length]
+    for index in range(length - 1, -1, -1):
+        result[index] = sequence[seq_index]
+        seq_index = prev_arr[seq_index]
+
+    return result
 
 
 if __name__ == "__main__":
     import doctest
+
     doctest.testmod()
-    print(lis([4, 5, 6, 1, 2]))
+    print(LIS([1, 3, 6, 7, 9, 4, 10, 5, 6]))

@@ -1,3 +1,4 @@
+#include "lecture_13 Stack.h"
 #include "lecture_3 Horner circuit.h"
 #include "lecture_5 Byte shift.h"
 #include "lecture_6 Basic sorts.h"
@@ -131,4 +132,14 @@ TEST(lecture_8, genDec) {
     std::vector<std::vector<int>> result {{1, 3}, {1, 4}, {2, 3}, {2, 4}};
     EXPECT_EQ(genDecIterative(sets), result);
     EXPECT_EQ(genDecRecurisive(sets), genDecIterative(sets));
+}
+
+TEST(lecture_13, validExp) {
+    EXPECT_EQ(validExp("(())"), true);
+    EXPECT_EQ(validExp("("), false);
+}
+
+TEST(lecture_13, validExp1) {
+    EXPECT_EQ(validExp1("({[]})"), true);
+    EXPECT_EQ(validExp1("([{])"), false);
 }

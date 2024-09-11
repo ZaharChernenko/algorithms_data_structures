@@ -1,4 +1,5 @@
 #include "lecture_13 Stack.h"
+#include "lecture_17 Backpack.h"
 #include "lecture_3 Horner circuit.h"
 #include "lecture_5 Byte shift.h"
 #include "lecture_6 Basic sorts.h"
@@ -142,4 +143,11 @@ TEST(lecture_13, validExp) {
 TEST(lecture_13, validExp1) {
     EXPECT_EQ(validExp1("({[]})"), true);
     EXPECT_EQ(validExp1("([{])"), false);
+}
+
+TEST(lecture_17, backpack) { EXPECT_EQ(backpack({1000, 1500, 2000, 3000}, {1, 1, 3, 4}, 4), 3500); }
+TEST(lecture_17, backpackDiscr) {
+    EXPECT_EQ(backpackDiscr({{11, 16, 23, 32, 38}, {12, 15, 24, 31, 39}, {10, 17, 22, 32, 40}, {11, 14, 25, 30, 38}},
+                            50, 250),
+              51);
 }

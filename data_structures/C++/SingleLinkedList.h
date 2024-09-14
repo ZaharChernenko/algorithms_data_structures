@@ -1,4 +1,5 @@
 #pragma once
+
 #include <cstddef>
 #include <initializer_list>
 #include <iostream>
@@ -6,7 +7,7 @@
 #include <ostream>
 #include <stdexcept>
 
-#define DEBUG
+// #define DEBUG
 
 template <class T>
 class SingleLinkedList {
@@ -30,10 +31,16 @@ class SingleLinkedList {
         friend class SingleLinkedList;
 
       public:
-        using iterator_category = std::forward_iterator_tag; // можно писать typedef
-        using difference_type = std::ptrdiff_t;              // но он устарел
+        // Объявленные ниже типы сообщают стандартной библиотеке о свойствах этого итератора
+        // Категория итератора — forward iterator
+        using iterator_category = std::forward_iterator_tag; // можно писать typedef, но он устарел
+        // Тип, используемый для хранения смещения между итераторами
+        using difference_type = std::ptrdiff_t;
+        // Тип элементов, по которым перемещается итератор
         using value_type = T;
+        // Тип указателя на итерируемое значение
         using pointer = T*;
+        // Тип ссылки на итерируемое значение
         using reference = T&;
 
       protected:
@@ -81,7 +88,7 @@ class SingleLinkedList {
     SingleLinkedList();
     SingleLinkedList(std::initializer_list<T> list);
     SingleLinkedList(const SingleLinkedList<T>& other);
-    SingleLinkedList(const std::size_t& size, const T& default_value = {});
+    SingleLinkedList(std::size_t size, const T& default_value = {});
     SingleLinkedList(SingleLinkedList<T>&& other);
     ~SingleLinkedList();
 
@@ -237,7 +244,7 @@ SingleLinkedList<T>::SingleLinkedList(const SingleLinkedList<T>& other)
 }
 
 template <class T>
-SingleLinkedList<T>::SingleLinkedList(const std::size_t& size, const T& default_value)
+SingleLinkedList<T>::SingleLinkedList(std::size_t size, const T& default_value)
     : _size {0}, _before_front {new Node({}, nullptr)}, _back {nullptr} {
     if (size < 0)
         throw std::length_error("length must be non negative");
@@ -371,7 +378,9 @@ SingleLinkedList<T>::const_iterator SingleLinkedList<T>::cbefore_begin() const {
 template <class T1>
 std::ostream& operator<<(std::ostream& os, const SingleLinkedList<T1>& list) {
     os << '[';
-    for (struct SingleLinkedList<T1>::Node* iter {list._before_front->next}; iter != nullptr; iter = iter->next) {
+    // без typename SingleLinkedList<T1>::Node посчитается статическим членом класса
+    // также подходит ключевые слова struct и class
+    for (typename SingleLinkedList<T1>::Node* iter {list._before_front->next}; iter != nullptr; iter = iter->next) {
         os << iter->value << ", ";
     }
     if (list._size > 0)
@@ -421,7 +430,7 @@ template <class T>
 void SingleLinkedList<T>::push_front(const T& value) {
     _before_front->next = new Node(value, _before_front->next);
     if (_back == nullptr)
-        _back = _before_front->next = new Node(value);
+        _back = _before_front->next;
     ++_size;
 }
 

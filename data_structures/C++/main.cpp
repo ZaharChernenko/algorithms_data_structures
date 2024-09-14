@@ -1,7 +1,12 @@
+#include "Heap.h"
 #include "SingleLinkedList.h"
+#include <algorithm>
 #include <chrono>
 #include <forward_list>
+#include <functional>
 #include <iostream>
+#include <queue>
+#include <vector>
 
 using std::cout;
 
@@ -45,13 +50,18 @@ int main() {
             cout << "ahtung!";
     }
 
-    SingleLinkedList<int> test1 {4, 3, 2, 1}, test2 {2, 3, 4, 5};
-    SingleLinkedList<int> test3 = test1 = test2; // для test1 вызвался оператор присваивания,
-                                                 // а для test3 конструктор копирования
+    Heap<int, std::less<int>> h1 {1, 2, 3, 4, -1, -2, -3, 4};
+    Heap<int, std::less<int>> h2 {1, 2, 3, -1, -2};
 
-    cout << test3 << '\n';
+    SingleLinkedList<int> l1 {1, 2, 3};
+    std::for_each(l1.begin(), l1.end(), [](int& el) { el = 25; });
+    std::cout << l1;
 
-    SingleLinkedList<int> test4 = list5();
-    cout << test4 << '\n';
+    std::cout << (h1 = std::move(h2)) << '\n';
+
+    while (h1) {
+        std::cout << h1.top() << ' ';
+        h1.pop();
+    }
     return 0;
 }

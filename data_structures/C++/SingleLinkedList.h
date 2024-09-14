@@ -1,12 +1,14 @@
 #pragma once
+
 #include <cstddef>
 #include <initializer_list>
 #include <iostream>
 #include <iterator>
 #include <ostream>
 #include <stdexcept>
+#include <utility>
 
-#define DEBUG
+// #define DEBUG
 
 template <class T>
 class SingleLinkedList {
@@ -26,14 +28,26 @@ class SingleLinkedList {
     class iterator;
     class const_iterator;
 
+    using container_type = SingleLinkedList<T>;
+    using value_type = T;
+    using reference = T&;
+    using const_reference = const T&;
+    using size_type = std::size_t;
+
     class iterator {
         friend class SingleLinkedList;
 
       public:
-        using iterator_category = std::forward_iterator_tag; // можно писать typedef
-        using difference_type = std::ptrdiff_t;              // но он устарел
+        // Объявленные ниже типы сообщают стандартной библиотеке о свойствах этого итератора
+        // Категория итератора — forward iterator
+        using iterator_category = std::forward_iterator_tag; // можно писать typedef, но он устарел
+        // Тип, используемый для хранения смещения между итераторами
+        using difference_type = std::ptrdiff_t;
+        // Тип элементов, по которым перемещается итератор
         using value_type = T;
+        // Тип указателя на итерируемое значение
         using pointer = T*;
+        // Тип ссылки на итерируемое значение
         using reference = T&;
 
       protected:
@@ -81,7 +95,7 @@ class SingleLinkedList {
     SingleLinkedList();
     SingleLinkedList(std::initializer_list<T> list);
     SingleLinkedList(const SingleLinkedList<T>& other);
-    SingleLinkedList(const std::size_t& size, const T& default_value = {});
+    SingleLinkedList(std::size_t size, const T& default_value = {});
     SingleLinkedList(SingleLinkedList<T>&& other);
     ~SingleLinkedList();
 
@@ -108,7 +122,9 @@ class SingleLinkedList {
     [[nodiscard]] T& back() const;
 
     void push_front(const T& value);
+    void push_front(T&& value);
     void push_back(const T& value);
+    void push_back(T&& value);
     void pop_front();
     void pop_back();
     void insert_after(const iterator& it, const T& value);
@@ -237,7 +253,7 @@ SingleLinkedList<T>::SingleLinkedList(const SingleLinkedList<T>& other)
 }
 
 template <class T>
-SingleLinkedList<T>::SingleLinkedList(const std::size_t& size, const T& default_value)
+SingleLinkedList<T>::SingleLinkedList(std::size_t size, const T& default_value)
     : _size {0}, _before_front {new Node({}, nullptr)}, _back {nullptr} {
     if (size < 0)
         throw std::length_error("length must be non negative");
@@ -274,6 +290,9 @@ SingleLinkedList<T>::~SingleLinkedList() {
 
 template <class T>
 SingleLinkedList<T>& SingleLinkedList<T>::operator=(const SingleLinkedList<T>& other) {
+    if (this == &other) [[unlikely]]
+        return *this;
+
     _size = 0;
     Node* next;
     while (_before_front->next) {
@@ -305,11 +324,13 @@ SingleLinkedList<T>& SingleLinkedList<T>::operator=(SingleLinkedList<T>&& other)
     other._before_front = new Node({});
     other._back = nullptr;
     other._size = 0;
+
+    return *this;
 }
 
 template <class T>
 T& SingleLinkedList<T>::operator[](std::size_t index) {
-    if (index >= _size)
+    if (index >= _size) [[unlikely]]
         throw std::out_of_range("list index out of range");
 
     Node* temp {_before_front->next};
@@ -320,7 +341,7 @@ T& SingleLinkedList<T>::operator[](std::size_t index) {
 
 template <class T>
 const T& SingleLinkedList<T>::operator[](std::size_t index) const {
-    if (index >= _size)
+    if (index >= _size) [[unlikely]]
         throw std::out_of_range("list index out of range");
 
     Node* temp {_before_front->next};
@@ -371,7 +392,9 @@ SingleLinkedList<T>::const_iterator SingleLinkedList<T>::cbefore_begin() const {
 template <class T1>
 std::ostream& operator<<(std::ostream& os, const SingleLinkedList<T1>& list) {
     os << '[';
-    for (struct SingleLinkedList<T1>::Node* iter {list._before_front->next}; iter != nullptr; iter = iter->next) {
+    // без typename SingleLinkedList<T1>::Node посчитается статическим членом класса
+    // также подходит ключевые слова struct и class
+    for (typename SingleLinkedList<T1>::Node* iter {list._before_front->next}; iter != nullptr; iter = iter->next) {
         os << iter->value << ", ";
     }
     if (list._size > 0)
@@ -391,28 +414,28 @@ bool SingleLinkedList<T>::empty() const {
 
 template <class T>
 T& SingleLinkedList<T>::front() {
-    if (_before_front->next == nullptr)
+    if (_before_front->next == nullptr) [[unlikely]]
         throw std::out_of_range("Empty list");
     return _before_front->next->value;
 }
 
 template <class T>
 T& SingleLinkedList<T>::front() const {
-    if (_before_front->next == nullptr)
+    if (_before_front->next == nullptr) [[unlikely]]
         throw std::out_of_range("Empty list");
     return _before_front->next->value;
 }
 
 template <class T>
 T& SingleLinkedList<T>::back() {
-    if (_before_front == nullptr)
+    if (_back == nullptr) [[unlikely]]
         throw std::out_of_range("Empty list");
     return _back->value;
 }
 
 template <class T>
 T& SingleLinkedList<T>::back() const {
-    if (_before_front == nullptr)
+    if (_back == nullptr) [[unlikely]]
         throw std::out_of_range("Empty list");
     return _back->value;
 }
@@ -421,7 +444,15 @@ template <class T>
 void SingleLinkedList<T>::push_front(const T& value) {
     _before_front->next = new Node(value, _before_front->next);
     if (_back == nullptr)
-        _back = _before_front->next = new Node(value);
+        _back = _before_front->next;
+    ++_size;
+}
+
+template <class T>
+void SingleLinkedList<T>::push_front(T&& value) {
+    _before_front->next = new Node(std::move(value), _before_front->next);
+    if (_back == nullptr)
+        _back = _before_front->next;
     ++_size;
 }
 
@@ -437,8 +468,19 @@ void SingleLinkedList<T>::push_back(const T& value) {
 }
 
 template <class T>
+void SingleLinkedList<T>::push_back(T&& value) {
+    if (_back == nullptr)
+        _before_front->next = _back = new Node(std::move(value));
+    else {
+        _back->next = new Node(std::move(value));
+        _back = _back->next;
+    }
+    ++_size;
+}
+
+template <class T>
 void SingleLinkedList<T>::pop_front() {
-    if (_before_front->next == nullptr)
+    if (_before_front->next == nullptr) [[unlikely]]
         throw std::length_error("Pop from empty list");
 
     --_size;
@@ -452,7 +494,7 @@ void SingleLinkedList<T>::pop_front() {
 
 template <class T>
 void SingleLinkedList<T>::pop_back() {
-    if (_before_front->next == nullptr)
+    if (_before_front->next == nullptr) [[unlikely]]
         throw std::length_error("Pop from empty list");
 
     --_size;

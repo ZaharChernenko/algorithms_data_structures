@@ -52,7 +52,7 @@ class Heap:
         self.siftDown(0)
         return obj
 
-    def getRoot(self):
+    def top(self):
         if not self.values:
             raise IndexError("heap is empty")
         return self.values[0]
@@ -79,8 +79,8 @@ def heapify(arr: list):
 def heapSort(arr: list):
     heapify(arr)
     size = len(arr)
-    for i in range(0, len(arr) - 1):
-        arr[0], arr[len(arr) - 1 - i] = arr[len(arr) - 1 - i], arr[0]
+    for _ in range(0, len(arr) - 1):
+        arr[0], arr[size - 1] = arr[size - 1], arr[0]
         size -= 1
         siftDown(arr, 0, size)
 

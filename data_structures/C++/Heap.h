@@ -18,8 +18,8 @@
 
 namespace {
 template <class Container, class Comparator>
-void siftDown(Container& container, std::size_t index, std::size_t size) {
-    Comparator comp {};
+inline void siftDown(Container& container, std::size_t index, std::size_t size) {
+    static Comparator comp {};
     std::size_t child_1, child_2;
 
     while ((child_1 = index * 2 + 1) < size) {
@@ -82,32 +82,32 @@ class Heap {
     [[nodiscard]] DataType top() const;
 
   protected:
-    void siftUp(std::size_t index);
-    void siftDown(std::size_t index);
+    inline void siftUp(std::size_t index);
+    inline void siftDown(std::size_t index);
 
   protected:
     std::vector<DataType> _data;
     std::size_t _size;
-    Comparator _comp;
+    constexpr static Comparator _comp {};
 };
 
 // constructors
 template <class DataType, class Comparator>
-Heap<DataType, Comparator>::Heap() : _data {}, _size {0}, _comp {} {
+Heap<DataType, Comparator>::Heap() : _data {}, _size {0} {
 #ifdef DEBUG
     std::cout << "Heap()" << '\n';
 #endif
 }
 
 template <class DataType, class Comparator>
-Heap<DataType, Comparator>::Heap(std::size_t size) : _data(size), _size {size}, _comp {} {
+Heap<DataType, Comparator>::Heap(std::size_t size) : _data(size), _size {size} {
 #ifdef DEBUG
     std::cout << "Heap(std::size_t)" << '\n';
 #endif
 }
 
 template <class DataType, class Comparator>
-Heap<DataType, Comparator>::Heap(std::size_t size, const DataType& val) : _data(size, val), _size {size}, _comp {} {
+Heap<DataType, Comparator>::Heap(std::size_t size, const DataType& val) : _data(size, val), _size {size} {
 #ifdef DEBUG
     std::cout << "Heap(std::size_t, const DataType&)" << '\n';
 #endif
@@ -115,12 +115,12 @@ Heap<DataType, Comparator>::Heap(std::size_t size, const DataType& val) : _data(
 
 template <class DataType, class Comparator>
 Heap<DataType, Comparator>::Heap(std::initializer_list<DataType> list)
-    : _data(list.begin(), list.end()), _size {list.size()}, _comp {} {
+    : _data(list.begin(), list.end()), _size {list.size()} {
     heapify<std::vector<DataType>, Comparator>(_data);
 }
 
 template <class DataType, class Comparator>
-Heap<DataType, Comparator>::Heap(const Heap& other) : _data {other._data}, _size {other._size}, _comp {} {
+Heap<DataType, Comparator>::Heap(const Heap& other) : _data {other._data}, _size {other._size} {
 #ifdef DEBUG
     std::cout << "Heap(const Heap& other)" << '\n';
 #endif
@@ -128,7 +128,7 @@ Heap<DataType, Comparator>::Heap(const Heap& other) : _data {other._data}, _size
 
 template <class DataType, class Comparator>
 Heap<DataType, Comparator>::Heap(Heap<DataType, Comparator>&& other)
-    : _data {std::move(other._data)}, _size {other._size}, _comp {} {
+    : _data {std::move(other._data)}, _size {other._size} {
     other._size = 0; // moving constructor is useless for built-in types
 #ifdef DEBUG
     std::cout << "Heap(Heap&& other)" << '\n';

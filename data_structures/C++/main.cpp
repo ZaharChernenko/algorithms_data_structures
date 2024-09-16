@@ -51,10 +51,9 @@ int main() {
     }
 
     Heap<int, std::less<int>> h1 {1, 2, 3, 4, -1, -2, -3, 4};
-    h1.push(1);
-    h1.push(2);
-    h1.push(-1);
-    h1.pop();
+    Heap<int, std::less<int>> h2 {1, 2, 3, -1, -2};
+
+    std::cout << (h1 = std::move(h2)) << '\n';
 
     while (h1) {
         std::cout << h1.top() << ' ';

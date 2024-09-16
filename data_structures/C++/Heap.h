@@ -70,6 +70,8 @@ class Heap {
     ~Heap() = default;
 
   public:
+    Heap<DataType, Comparator>& operator=(const Heap<DataType, Comparator>& other);
+    Heap<DataType, Comparator>& operator=(Heap<DataType, Comparator>&& other);
     explicit operator bool() const;
 
     template <class DataType1, class Comparator1>
@@ -133,6 +135,27 @@ Heap<DataType, Comparator>::Heap(Heap<DataType, Comparator>&& other)
 #ifdef DEBUG
     std::cout << "Heap(Heap&& other)" << '\n';
 #endif
+}
+
+template <class DataType, class Comparator>
+Heap<DataType, Comparator>& Heap<DataType, Comparator>::operator=(const Heap<DataType, Comparator>& other) {
+#ifdef DEBUG
+    std::cout << "operator=(const Heap& other)" << '\n';
+#endif
+    _size = other._size;
+    _data = other._data;
+    return *this;
+}
+
+template <class DataType, class Comparator>
+Heap<DataType, Comparator>& Heap<DataType, Comparator>::operator=(Heap<DataType, Comparator>&& other) {
+#ifdef DEBUG
+    std::cout << "operator=(Heap&& other)" << '\n';
+#endif
+    _size = other._size;
+    _data = std::move(other._data);
+    other._size = 0;
+    return *this;
 }
 
 template <class DataType, class Comparator>

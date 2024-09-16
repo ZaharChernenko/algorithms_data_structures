@@ -37,7 +37,7 @@ inline void siftDown(Container& container, std::size_t index, std::size_t size) 
 
 template <class Container, class Comparator>
 void heapify(Container& container) {
-    if (container.size() < 2)
+    if (container.size() < 2) [[unlikely]]
         return;
     std::size_t size {container.size()};
     // т.к. вершин, которые удалены от листьев n / 2, то начинаем с n / 2 - 1 индекса
@@ -59,6 +59,13 @@ void heapSort(std::vector<T>& arr) {
 
 template <class DataType, class Comparator = std::less<DataType>>
 class Heap {
+    // https://en.cppreference.com/w/cpp/named_req
+    using container_type = std::vector<DataType>;
+    using value_type = container_type::value_type;
+    using reference = container_type::reference;
+    using const_reference = container_type::const_reference;
+    using size_type = container_type::size_type;
+
   public:
     Heap();
     Heap(std::size_t size);
@@ -81,7 +88,7 @@ class Heap {
     void pop();
     [[nodiscard]] std::size_t size() const;
     [[nodiscard]] bool empty() const;
-    [[nodiscard]] DataType top() const;
+    [[nodiscard]] const DataType& top() const;
 
   protected:
     inline void siftUp(std::size_t index);
@@ -209,7 +216,7 @@ void Heap<DataType, Comparator>::push(const DataType& val) {
 
 template <class DataType, class Comparator>
 void Heap<DataType, Comparator>::pop() {
-    if (!_size)
+    if (!_size) [[unlikely]]
         throw std::length_error("Pop from empty heap");
     std::swap(_data[0], _data[--_size]);
     _data.pop_back();
@@ -227,8 +234,8 @@ bool Heap<DataType, Comparator>::empty() const {
 }
 
 template <class DataType, class Comparator>
-DataType Heap<DataType, Comparator>::top() const {
-    if (_size == 0)
+const DataType& Heap<DataType, Comparator>::top() const {
+    if (_size == 0) [[unlikely]]
         throw std::out_of_range("Empty heap");
     return _data[0];
 }

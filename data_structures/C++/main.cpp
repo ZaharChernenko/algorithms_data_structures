@@ -53,6 +53,10 @@ int main() {
     Heap<int, std::less<int>> h1 {1, 2, 3, 4, -1, -2, -3, 4};
     Heap<int, std::less<int>> h2 {1, 2, 3, -1, -2};
 
+    SingleLinkedList<int> l1 {1, 2, 3};
+    std::for_each(l1.begin(), l1.end(), [](int& el) { el = 25; });
+    std::cout << l1;
+
     std::cout << (h1 = std::move(h2)) << '\n';
 
     while (h1) {

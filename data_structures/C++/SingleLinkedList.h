@@ -27,6 +27,12 @@ class SingleLinkedList {
     class iterator;
     class const_iterator;
 
+    using container_type = SingleLinkedList<T>;
+    using value_type = T;
+    using reference = T&;
+    using const_reference = const T&;
+    using size_type = std::size_t;
+
     class iterator {
         friend class SingleLinkedList;
 
@@ -316,7 +322,7 @@ SingleLinkedList<T>& SingleLinkedList<T>::operator=(SingleLinkedList<T>&& other)
 
 template <class T>
 T& SingleLinkedList<T>::operator[](std::size_t index) {
-    if (index >= _size)
+    if (index >= _size) [[unlikely]]
         throw std::out_of_range("list index out of range");
 
     Node* temp {_before_front->next};
@@ -327,7 +333,7 @@ T& SingleLinkedList<T>::operator[](std::size_t index) {
 
 template <class T>
 const T& SingleLinkedList<T>::operator[](std::size_t index) const {
-    if (index >= _size)
+    if (index >= _size) [[unlikely]]
         throw std::out_of_range("list index out of range");
 
     Node* temp {_before_front->next};
@@ -400,28 +406,28 @@ bool SingleLinkedList<T>::empty() const {
 
 template <class T>
 T& SingleLinkedList<T>::front() {
-    if (_before_front->next == nullptr)
+    if (_before_front->next == nullptr) [[unlikely]]
         throw std::out_of_range("Empty list");
     return _before_front->next->value;
 }
 
 template <class T>
 T& SingleLinkedList<T>::front() const {
-    if (_before_front->next == nullptr)
+    if (_before_front->next == nullptr) [[unlikely]]
         throw std::out_of_range("Empty list");
     return _before_front->next->value;
 }
 
 template <class T>
 T& SingleLinkedList<T>::back() {
-    if (_before_front == nullptr)
+    if (_back == nullptr) [[unlikely]]
         throw std::out_of_range("Empty list");
     return _back->value;
 }
 
 template <class T>
 T& SingleLinkedList<T>::back() const {
-    if (_before_front == nullptr)
+    if (_back == nullptr) [[unlikely]]
         throw std::out_of_range("Empty list");
     return _back->value;
 }
@@ -447,7 +453,7 @@ void SingleLinkedList<T>::push_back(const T& value) {
 
 template <class T>
 void SingleLinkedList<T>::pop_front() {
-    if (_before_front->next == nullptr)
+    if (_before_front->next == nullptr) [[unlikely]]
         throw std::length_error("Pop from empty list");
 
     --_size;
@@ -461,7 +467,7 @@ void SingleLinkedList<T>::pop_front() {
 
 template <class T>
 void SingleLinkedList<T>::pop_back() {
-    if (_before_front->next == nullptr)
+    if (_before_front->next == nullptr) [[unlikely]]
         throw std::length_error("Pop from empty list");
 
     --_size;

@@ -104,21 +104,21 @@ class Heap {
 template <class DataType, class Comparator>
 Heap<DataType, Comparator>::Heap() : _data {}, _size {0} {
 #ifdef DEBUG
-    std::cout << "Heap()" << '\n';
+    std::cout << "Heap()\n";
 #endif
 }
 
 template <class DataType, class Comparator>
 Heap<DataType, Comparator>::Heap(std::size_t size) : _data(size), _size {size} {
 #ifdef DEBUG
-    std::cout << "Heap(std::size_t)" << '\n';
+    std::cout << "Heap(std::size_t)\n";
 #endif
 }
 
 template <class DataType, class Comparator>
 Heap<DataType, Comparator>::Heap(std::size_t size, const DataType& val) : _data(size, val), _size {size} {
 #ifdef DEBUG
-    std::cout << "Heap(std::size_t, const DataType&)" << '\n';
+    std::cout << "Heap(std::size_t, const DataType&)\n";
 #endif
 }
 
@@ -131,7 +131,7 @@ Heap<DataType, Comparator>::Heap(std::initializer_list<DataType> list)
 template <class DataType, class Comparator>
 Heap<DataType, Comparator>::Heap(const Heap& other) : _data {other._data}, _size {other._size} {
 #ifdef DEBUG
-    std::cout << "Heap(const Heap& other)" << '\n';
+    std::cout << "Heap(const Heap& other)\n";
 #endif
 }
 
@@ -140,14 +140,14 @@ Heap<DataType, Comparator>::Heap(Heap<DataType, Comparator>&& other)
     : _data {std::move(other._data)}, _size {other._size} {
     other._size = 0; // moving constructor is useless for built-in types
 #ifdef DEBUG
-    std::cout << "Heap(Heap&& other)" << '\n';
+    std::cout << "Heap(Heap&& other)\n";
 #endif
 }
 
 template <class DataType, class Comparator>
 Heap<DataType, Comparator>& Heap<DataType, Comparator>::operator=(const Heap<DataType, Comparator>& other) {
 #ifdef DEBUG
-    std::cout << "operator=(const Heap& other)" << '\n';
+    std::cout << "operator=(const Heap& other)\n";
 #endif
     _size = other._size;
     _data = other._data;
@@ -157,7 +157,7 @@ Heap<DataType, Comparator>& Heap<DataType, Comparator>::operator=(const Heap<Dat
 template <class DataType, class Comparator>
 Heap<DataType, Comparator>& Heap<DataType, Comparator>::operator=(Heap<DataType, Comparator>&& other) {
 #ifdef DEBUG
-    std::cout << "operator=(Heap&& other)" << '\n';
+    std::cout << "operator=(Heap&& other)\n";
 #endif
     _size = other._size;
     _data = std::move(other._data);

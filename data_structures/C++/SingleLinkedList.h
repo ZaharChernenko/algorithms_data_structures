@@ -287,6 +287,9 @@ SingleLinkedList<T>::~SingleLinkedList() {
 
 template <class T>
 SingleLinkedList<T>& SingleLinkedList<T>::operator=(const SingleLinkedList<T>& other) {
+    if (this == &other) [[unlikely]]
+        return *this;
+
     _size = 0;
     Node* next;
     while (_before_front->next) {
@@ -318,6 +321,8 @@ SingleLinkedList<T>& SingleLinkedList<T>::operator=(SingleLinkedList<T>&& other)
     other._before_front = new Node({});
     other._back = nullptr;
     other._size = 0;
+
+    return *this;
 }
 
 template <class T>

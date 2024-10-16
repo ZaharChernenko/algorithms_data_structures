@@ -6,6 +6,7 @@
 #include <iterator>
 #include <ostream>
 #include <stdexcept>
+#include <utility>
 
 // #define DEBUG
 
@@ -121,7 +122,9 @@ class SingleLinkedList {
     [[nodiscard]] T& back() const;
 
     void push_front(const T& value);
+    void push_front(T&& value);
     void push_back(const T& value);
+    void push_back(T&& value);
     void pop_front();
     void pop_back();
     void insert_after(const iterator& it, const T& value);
@@ -446,11 +449,30 @@ void SingleLinkedList<T>::push_front(const T& value) {
 }
 
 template <class T>
+void SingleLinkedList<T>::push_front(T&& value) {
+    _before_front->next = new Node(std::move(value), _before_front->next);
+    if (_back == nullptr)
+        _back = _before_front->next;
+    ++_size;
+}
+
+template <class T>
 void SingleLinkedList<T>::push_back(const T& value) {
     if (_back == nullptr)
         _before_front->next = _back = new Node(value);
     else {
         _back->next = new Node(value);
+        _back = _back->next;
+    }
+    ++_size;
+}
+
+template <class T>
+void SingleLinkedList<T>::push_back(T&& value) {
+    if (_back == nullptr)
+        _before_front->next = _back = new Node(std::move(value));
+    else {
+        _back->next = new Node(std::move(value));
         _back = _back->next;
     }
     ++_size;

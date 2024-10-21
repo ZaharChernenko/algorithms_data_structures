@@ -188,7 +188,7 @@ template <class DataType, class Comparator>
 void Heap<DataType, Comparator>::siftUp(std::size_t index) {
     std::size_t parent;
     while (index != 0 && _comp(_data[index], _data[parent = (index - 1) / 2])) {
-        std::swap(_data[index], _data[(index - 1) / 2]);
+        std::swap(_data[index], _data[parent]);
         index = parent;
     }
 }

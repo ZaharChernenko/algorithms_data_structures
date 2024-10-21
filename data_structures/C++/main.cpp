@@ -1,12 +1,9 @@
-#include "Heap.h"
+#include "BinaryTreeRecursive.h"
 #include "SingleLinkedList.h"
-#include <algorithm>
 #include <chrono>
 #include <forward_list>
-#include <functional>
 #include <iostream>
-#include <queue>
-#include <vector>
+#include <set>
 
 using std::cout;
 
@@ -17,7 +14,8 @@ SingleLinkedList<int> list5() {
     return temp;
 }
 
-int main() {
+void single_linked_list_test() {
+    cout << "Тест односвязного списка:\n";
     std::chrono::steady_clock::time_point start {std::chrono::steady_clock::now()};
     SingleLinkedList<int> my_l;
     for (int i {0}; i != 10000; ++i)
@@ -50,18 +48,40 @@ int main() {
             cout << "ahtung!";
     }
 
-    Heap<int, std::less<int>> h1 {1, 2, 3, 4, -1, -2, -3, 4};
-    Heap<int, std::less<int>> h2 {1, 2, 3, -1, -2};
+    SingleLinkedList<int> test1 {4, 3, 2, 1}, test2 {2, 3, 4, 5};
+    SingleLinkedList<int> test3 = test1 = test2; // для test1 вызвался оператор присваивания,
+                                                 // а для test3 конструктор копирования
 
-    SingleLinkedList<int> l1 {1, 2, 3};
-    std::for_each(l1.begin(), l1.end(), [](int& el) { el = 25; });
-    std::cout << l1;
+    cout << test3 << '\n';
 
-    std::cout << (h1 = std::move(h2)) << '\n';
+    SingleLinkedList<int> test4 = list5();
+    cout << test4 << '\n';
+}
 
-    while (h1) {
-        std::cout << h1.top() << ' ';
-        h1.pop();
-    }
+void binary_tree_recursive_test() {
+    cout << "Тест бинарного дерева:\n";
+    std::chrono::steady_clock::time_point start {std::chrono::steady_clock::now()};
+    BinaryTreeRecursive<int> my_t;
+    for (int i {0}; i != 10000; ++i)
+        my_t.insert(i);
+    for (int i {0}; i != 10000; ++i)
+        my_t.erase(i);
+
+    cout << "Время моего дерева: "
+         << std::chrono::duration<double, std::milli>(std::chrono::steady_clock::now() - start).count() << '\n';
+
+    start = std::chrono::steady_clock::now();
+    std::set<int> std_t;
+    for (int i {0}; i != 10000; ++i)
+        std_t.insert(i);
+    for (int i {0}; i != 10000; ++i)
+        std_t.erase(i);
+    cout << "Время библиотечного дерева: "
+         << std::chrono::duration<double, std::milli>(std::chrono::steady_clock::now() - start).count() << '\n';
+}
+
+int main() {
+    single_linked_list_test();
+    binary_tree_recursive_test();
     return 0;
 }

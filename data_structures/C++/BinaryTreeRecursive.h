@@ -21,6 +21,8 @@ class BinaryTreeRecursive {
     BinaryTreeRecursive(const BinaryTreeRecursive<DataType, Comparator>& other);
     BinaryTreeRecursive(BinaryTreeRecursive<DataType, Comparator>&& other);
     BinaryTreeRecursive(std::initializer_list<DataType> arr);
+    // поскольку рекурсия точно завершится, то переполнения не будет, также память стека и память кучи раздельна,
+    // поэтому даже если куча забита, то деструктор должен выполнится без исключений, поэтому отмечаем noexcept
     ~BinaryTreeRecursive() noexcept;
 
     BinaryTreeRecursive<DataType, Comparator>& operator=(const BinaryTreeRecursive<DataType, Comparator>& other);
@@ -30,6 +32,7 @@ class BinaryTreeRecursive {
     template <class DataType1, class Comparator1>
     friend std::ostream& operator<<(std::ostream& os, const BinaryTreeRecursive<DataType1, Comparator1>& tree);
 
+    // с помощью using можно сократить код, не реализуя два разных класса
     using iterator = BasicIterator<DataType>;
     using const_iterator = BasicIterator<const DataType>;
     [[nodiscard]] iterator begin() const noexcept;
@@ -57,6 +60,7 @@ class BinaryTreeRecursive {
 
     template <class IteratorDataType>
     class BasicIterator {
+        // обе структуры лежат в <type_traits>
         using MutableIteratorDataType = std::remove_const<IteratorDataType>::type;
         using ConstIteratorDataType = std::add_const<IteratorDataType>::type;
 
@@ -67,9 +71,23 @@ class BinaryTreeRecursive {
 
         BasicIterator& operator=(const BasicIterator& other);
         BasicIterator& operator=(BasicIterator&& other);
+
+        /*
+          Если класс не шаблонный, то оператор приведения к своему же типу нельзя сделать, однако для шаблонных
+          классов такое возможно, что позволяет приводить тип с одним параметром в тип с другим параметром. В этом коде
+          реализован оператор приведения (conversion operator) к итератору на константное значение, что позволяет не
+          писать отдельные реализации для итераторов с разной константностью
+        */
         operator BasicIterator<ConstIteratorDataType>() const;
 
         [[nodiscard]] const IteratorDataType& operator*() noexcept;
+        /*
+         На самом деле оператор -> работает так: (*it.operator->()).value;
+         Сначала вызывается operator->() у итератора, а потом уже к этому указателю применяется оператор стрелка,
+         т.е. он работает как бы дважды.
+         При обязательно нужно возвращать именно указатель, т.к. в синтаксисе языке -> предназначена именно для такого
+         типа данных
+        */
         [[nodiscard]] const IteratorDataType* operator->() noexcept;
         BasicIterator& operator++();
         [[nodiscard]] BasicIterator operator++(int);

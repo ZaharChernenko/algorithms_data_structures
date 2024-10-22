@@ -4,6 +4,7 @@
 #include <forward_list>
 #include <iostream>
 #include <set>
+#include <vector>
 
 using std::cout;
 
@@ -78,12 +79,20 @@ void binary_tree_recursive_test() {
         std_t.erase(i);
     cout << "Время библиотечного дерева: "
          << std::chrono::duration<double, std::milli>(std::chrono::steady_clock::now() - start).count() << '\n';
+}
 
-    my_t = {1, 2, 3};
-    cout << (my_t.find(4) == my_t.end()) << ' ' << my_t.contains(1);
+template <typename Iterator>
+void print_iterator_info(Iterator it) {
+    using traits = std::iterator_traits<Iterator>;
+    std::cout << "Value type: " << typeid(typename traits::value_type).name() << std::endl;
+    std::cout << "Difference type: " << typeid(typename traits::difference_type).name() << std::endl;
+    std::cout << "Pointer type: " << typeid(typename traits::pointer).name() << std::endl;
+    std::cout << "Reference type: " << typeid(typename traits::reference).name() << std::endl;
+    std::cout << "Iterator category: " << typeid(typename traits::iterator_category).name() << std::endl;
 }
 
 int main() {
+    print_iterator_info(BinaryTreeRecursive<int>::iterator());
     single_linked_list_test();
     binary_tree_recursive_test();
     return 0;

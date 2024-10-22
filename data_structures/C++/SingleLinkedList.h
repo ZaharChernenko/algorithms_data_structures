@@ -364,6 +364,7 @@ template <class T>
 SingleLinkedList<T>::iterator SingleLinkedList<T>::before_begin() const {
     return iterator(_before_front);
 }
+
 /*
 код не работает, т.к. после создания итератора, вызывается деструктор Node,
 в результате ссылка становится битой, поэтому лучше создать указатель на начало

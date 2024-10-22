@@ -78,6 +78,9 @@ void binary_tree_recursive_test() {
         std_t.erase(i);
     cout << "Время библиотечного дерева: "
          << std::chrono::duration<double, std::milli>(std::chrono::steady_clock::now() - start).count() << '\n';
+
+    my_t = {1, 2, 3};
+    cout << (my_t.find(4) == my_t.end()) << ' ' << my_t.contains(1);
 }
 
 int main() {

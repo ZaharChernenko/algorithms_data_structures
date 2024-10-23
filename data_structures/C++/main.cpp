@@ -84,7 +84,8 @@ void binary_tree_recursive_test() {
     // BinaryTreeRecursive<int>::iterator it {BinaryTreeRecursive<double>::iterator()};
     my_t = {1, 2, 3};
     BinaryTreeRecursive<int>::iterator it {my_t.begin()};
-    BinaryTreeRecursive<int>::const_iterator cit {my_t.cbegin()};
+    BinaryTreeRecursive<int>::const_iterator cit {};
+    cit = it;
     cit = std::move(it);
 }
 

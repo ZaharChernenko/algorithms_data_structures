@@ -3,7 +3,6 @@
 #include <algorithm>
 #include <cstddef>
 #include <initializer_list>
-#include <iostream>
 #include <iterator>
 #include <ostream>
 #include <stack>
@@ -11,10 +10,10 @@
 #include <utility>
 #include <vector>
 
-template <class DataType, class Comparator = std::less<DataType>>
+template <typename DataType, typename Comparator = std::less<DataType>>
 class BinaryTreeRecursive {
   protected:
-    template <class IteratorDataType>
+    template <typename IteratorDataType>
     class BasicIterator;
 
   public:
@@ -40,7 +39,7 @@ class BinaryTreeRecursive {
     operator std::vector<DataType>() const;
     explicit operator bool() const noexcept;
 
-    template <class DataType1, class Comparator1>
+    template <typename DataType1, typename Comparator1>
     friend std::ostream& operator<<(std::ostream& os, const BinaryTreeRecursive<DataType1, Comparator1>& tree);
 
     // с помощью using можно сократить код, не реализуя два разных класса
@@ -74,7 +73,7 @@ class BinaryTreeRecursive {
         Node* right {nullptr};
     };
 
-    template <class IteratorDataType>
+    template <typename IteratorDataType>
     class BasicIterator {
       protected:
         // обе структуры лежат в <type_traits>
@@ -95,29 +94,42 @@ class BinaryTreeRecursive {
         /*
          SFINAE - Substitution Failure Is Not An Error. При определении перегрузок функции ошибочные инстанциации
          шаблонов не вызывают ошибку компиляции, а отбрасываются из списка кандидатов на наиболее подходящую перегрузку.
-         std::is_convertible - структура, которая содержит поле value, в котором лежит вердикт, можно ли из первого
-         класса сделать второй.
+         std::is_const - структура, которая содержит поле value, в котором лежит вердикт, является ли тип константным
+         или нет а enable_if содержит type только если получает, первым элементом true (вторым элементом может быть
+         любой тип)
         */
-        template <class OtherIteratorDataType>
-        BasicIterator(
-            const BasicIterator<OtherIteratorDataType>& other,
-            typename std::enable_if<std::is_convertible<OtherIteratorDataType, IteratorDataType>::value>::type* =
-                nullptr) noexcept;
-        template <class OtherIteratorDataType>
-        BasicIterator(
-            BasicIterator<OtherIteratorDataType>&& other,
-            typename std::enable_if<std::is_convertible<OtherIteratorDataType, IteratorDataType>::value>::type* =
-                nullptr) noexcept;
+        template <typename OtherIteratorDataType,
+                  typename = typename std::enable_if<!std::is_const<OtherIteratorDataType>::value>::type>
+        BasicIterator(const BasicIterator<OtherIteratorDataType>& other);
+
+        template <typename OtherIteratorDataType,
+                  typename = typename std::enable_if<!std::is_const<OtherIteratorDataType>::value>::type>
+        BasicIterator(BasicIterator<OtherIteratorDataType>&& other);
 
         BasicIterator& operator=(const BasicIterator& other);
+        template <typename OtherIteratorDataType,
+                  typename = typename std::enable_if<!std::is_const<OtherIteratorDataType>::value>::type>
+        BasicIterator& operator=(const BasicIterator<OtherIteratorDataType>& other);
+        BasicIterator& operator=(BasicIterator&& other);
+        template <typename OtherIteratorDataType,
+                  typename = typename std::enable_if<!std::is_const<OtherIteratorDataType>::value>::type>
+        BasicIterator& operator=(BasicIterator<OtherIteratorDataType>&& other);
         /*
           Если класс не шаблонный, то оператор приведения к своему же типу нельзя сделать, однако для шаблонных
           классов такое возможно, что позволяет приводить тип с одним параметром в тип с другим параметром. В этом коде
           реализован оператор приведения (conversion operator) к итератору на константное значение, что позволяет не
           писать отдельные реализации для итераторов с разной константностью
-        */
-        explicit operator BasicIterator<ConstIteratorDataType>() const;
 
+          explicit operator BasicIterator<ConstIteratorDataType>() const;
+          template <typename DataType, typename Comparator>
+          template <typename IteratorDataType>
+          BinaryTreeRecursive<DataType, Comparator>::BasicIterator<IteratorDataType>::operator
+          BasicIterator<ConstIteratorDataType>() const {
+              BasicIterator<ConstIteratorDataType> const_iter;
+              const_iter.ptr_stack = ptr_stack;
+              return const_iter;
+          }
+        */
         [[nodiscard]] const IteratorDataType& operator*() noexcept;
         /*
          На самом деле оператор -> работает так: (*it.operator->()).value;
@@ -160,14 +172,14 @@ class BinaryTreeRecursive {
     constexpr static Comparator _comp {};
 };
 
-template <class DataType, class Comparator>
+template <typename DataType, typename Comparator>
 BinaryTreeRecursive<DataType, Comparator>::BinaryTreeRecursive() : _root {nullptr}, _size {0} {
 #ifdef DEBUG
     std::cout << "BinaryTreeRecursive()\n";
 #endif
 }
 
-template <class DataType, class Comparator>
+template <typename DataType, typename Comparator>
 BinaryTreeRecursive<DataType, Comparator>::BinaryTreeRecursive(std::initializer_list<DataType> arr)
     : _root {nullptr}, _size {0} {
     for (const DataType& val : arr)
@@ -178,7 +190,7 @@ BinaryTreeRecursive<DataType, Comparator>::BinaryTreeRecursive(std::initializer_
 #endif
 }
 
-template <class DataType, class Comparator>
+template <typename DataType, typename Comparator>
 BinaryTreeRecursive<DataType, Comparator>::BinaryTreeRecursive(const BinaryTreeRecursive<DataType, Comparator>& other)
     : _root {nullptr}, _size {other._size} {
     _root = _copyTree(other._root);
@@ -187,7 +199,7 @@ BinaryTreeRecursive<DataType, Comparator>::BinaryTreeRecursive(const BinaryTreeR
 #endif
 }
 
-template <class DataType, class Comparator>
+template <typename DataType, typename Comparator>
 BinaryTreeRecursive<DataType, Comparator>::BinaryTreeRecursive(BinaryTreeRecursive<DataType, Comparator>&& other)
     : _root {other._root}, _size {other._size} {
     other._root = nullptr;
@@ -197,7 +209,7 @@ BinaryTreeRecursive<DataType, Comparator>::BinaryTreeRecursive(BinaryTreeRecursi
 #endif
 }
 
-template <class DataType, class Comparator>
+template <typename DataType, typename Comparator>
 BinaryTreeRecursive<DataType, Comparator>::~BinaryTreeRecursive() noexcept {
     _deleteTree(_root);
 #ifdef DEBUG
@@ -205,7 +217,7 @@ BinaryTreeRecursive<DataType, Comparator>::~BinaryTreeRecursive() noexcept {
 #endif
 }
 
-template <class DataType, class Comparator>
+template <typename DataType, typename Comparator>
 BinaryTreeRecursive<DataType, Comparator>&
 BinaryTreeRecursive<DataType, Comparator>::operator=(const BinaryTreeRecursive<DataType, Comparator>& other) {
     if (this == &other)
@@ -220,7 +232,7 @@ BinaryTreeRecursive<DataType, Comparator>::operator=(const BinaryTreeRecursive<D
 #endif
 }
 
-template <class DataType, class Comparator>
+template <typename DataType, typename Comparator>
 BinaryTreeRecursive<DataType, Comparator>&
 BinaryTreeRecursive<DataType, Comparator>::operator=(BinaryTreeRecursive<DataType, Comparator>&& other) {
     _deleteTree(_root);
@@ -236,7 +248,7 @@ BinaryTreeRecursive<DataType, Comparator>::operator=(BinaryTreeRecursive<DataTyp
 #endif
 }
 
-template <class DataType, class Comparator>
+template <typename DataType, typename Comparator>
 BinaryTreeRecursive<DataType, Comparator>::operator std::vector<DataType>() const {
     std::vector<DataType> res(_size);
     std::size_t cur_index {0};
@@ -244,18 +256,18 @@ BinaryTreeRecursive<DataType, Comparator>::operator std::vector<DataType>() cons
     return res;
 }
 
-template <class DataType, class Comparator>
+template <typename DataType, typename Comparator>
 BinaryTreeRecursive<DataType, Comparator>::operator bool() const noexcept {
     return _size != 0;
 }
 
-template <class DataType, class Comparator>
+template <typename DataType, typename Comparator>
 BinaryTreeRecursive<DataType, Comparator>::Node::Node(const DataType& val) : val {val} {}
 
-template <class DataType, class Comparator>
+template <typename DataType, typename Comparator>
 BinaryTreeRecursive<DataType, Comparator>::Node::Node(DataType&& val) : val {std::move(val)} {}
 
-template <class DataType, class Comparator>
+template <typename DataType, typename Comparator>
 void BinaryTreeRecursive<DataType, Comparator>::_printTree(std::ostream& os, const Node* const cur_node,
                                                            const Node* const leftest_node) const {
     if (!cur_node)
@@ -267,77 +279,75 @@ void BinaryTreeRecursive<DataType, Comparator>::_printTree(std::ostream& os, con
     _printTree(os, cur_node->right, leftest_node);
 }
 
-template <class DataType1, class Comparator1>
+template <typename DataType1, typename Comparator1>
 std::ostream& operator<<(std::ostream& os, const BinaryTreeRecursive<DataType1, Comparator1>& tree) {
     os << '[';
     tree._printTree(os, tree._root, tree._getLeftestNode(tree._root));
     return os << ']';
 }
 
-template <class DataType, class Comparator>
+template <typename DataType, typename Comparator>
 BinaryTreeRecursive<DataType, Comparator>::iterator BinaryTreeRecursive<DataType, Comparator>::begin() noexcept {
     return iterator(_root);
 }
 
-template <class DataType, class Comparator>
+template <typename DataType, typename Comparator>
 BinaryTreeRecursive<DataType, Comparator>::iterator BinaryTreeRecursive<DataType, Comparator>::end() noexcept {
     return iterator(nullptr);
 }
 
-template <class DataType, class Comparator>
+template <typename DataType, typename Comparator>
 BinaryTreeRecursive<DataType, Comparator>::const_iterator
 BinaryTreeRecursive<DataType, Comparator>::begin() const noexcept {
     return const_iterator(_root);
 }
 
-template <class DataType, class Comparator>
+template <typename DataType, typename Comparator>
 BinaryTreeRecursive<DataType, Comparator>::const_iterator
 BinaryTreeRecursive<DataType, Comparator>::end() const noexcept {
     return const_iterator(nullptr);
 }
 
-template <class DataType, class Comparator>
+template <typename DataType, typename Comparator>
 BinaryTreeRecursive<DataType, Comparator>::const_iterator
 BinaryTreeRecursive<DataType, Comparator>::cbegin() const noexcept {
     return const_iterator(_root);
 }
 
-template <class DataType, class Comparator>
+template <typename DataType, typename Comparator>
 BinaryTreeRecursive<DataType, Comparator>::const_iterator
 BinaryTreeRecursive<DataType, Comparator>::cend() const noexcept {
     return const_iterator(nullptr);
 }
 
-template <class DataType, class Comparator>
-template <class IteratorDataType>
+template <typename DataType, typename Comparator>
+template <typename IteratorDataType>
 BinaryTreeRecursive<DataType, Comparator>::BasicIterator<IteratorDataType>::BasicIterator(
     const BasicIterator& other) noexcept
     : ptr_stack {other.ptr_stack} {}
 
-template <class DataType, class Comparator>
-template <class IteratorDataType>
+template <typename DataType, typename Comparator>
+template <typename IteratorDataType>
 BinaryTreeRecursive<DataType, Comparator>::BasicIterator<IteratorDataType>::BasicIterator(
     BasicIterator&& other) noexcept
     : ptr_stack {std::move(other.ptr_stack)} {}
 
-template <class DataType, class Comparator>
-template <class IteratorDataType>
-template <class OtherIteratorDataType>
+template <typename DataType, typename Comparator>
+template <typename IteratorDataType>
+template <typename OtherIteratorDataType, typename>
 BinaryTreeRecursive<DataType, Comparator>::BasicIterator<IteratorDataType>::BasicIterator(
-    const BasicIterator<OtherIteratorDataType>& other,
-    typename std::enable_if<std::is_convertible<OtherIteratorDataType, IteratorDataType>::value>::type*) noexcept
+    const BasicIterator<OtherIteratorDataType>& other)
     : ptr_stack {other.ptr_stack} {}
 
-template <class DataType, class Comparator>
-template <class IteratorDataType>
-template <class OtherIteratorDataType>
+template <typename DataType, typename Comparator>
+template <typename IteratorDataType>
+template <typename OtherIteratorDataType, typename>
 BinaryTreeRecursive<DataType, Comparator>::BasicIterator<IteratorDataType>::BasicIterator(
-    BasicIterator<OtherIteratorDataType>&& other,
-    typename std::enable_if<std::is_convertible<OtherIteratorDataType, IteratorDataType>::value>::type*) noexcept
+    BasicIterator<OtherIteratorDataType>&& other)
     : ptr_stack {std::move(other.ptr_stack)} {}
 
-template <class DataType, class Comparator>
-template <class IteratorDataType>
+template <typename DataType, typename Comparator>
+template <typename IteratorDataType>
 BinaryTreeRecursive<DataType, Comparator>::BasicIterator<IteratorDataType>::BasicIterator(Node* node) : ptr_stack {} {
     if (!node)
         return;
@@ -347,39 +357,58 @@ BinaryTreeRecursive<DataType, Comparator>::BasicIterator<IteratorDataType>::Basi
         ptr_stack.push(node);
 }
 
-template <class DataType, class Comparator>
-template <class IteratorDataType>
+template <typename DataType, typename Comparator>
+template <typename IteratorDataType>
 BinaryTreeRecursive<DataType, Comparator>::BasicIterator<IteratorDataType>&
 BinaryTreeRecursive<DataType, Comparator>::BasicIterator<IteratorDataType>::operator=(const BasicIterator& other) {
     ptr_stack = other.ptr_stack;
     return *this;
 }
 
-template <class DataType, class Comparator>
-template <class IteratorDataType>
-BinaryTreeRecursive<DataType, Comparator>::BasicIterator<IteratorDataType>::operator BasicIterator<
-    ConstIteratorDataType>() const {
-    BasicIterator<ConstIteratorDataType> const_iter;
-    const_iter.ptr_stack = ptr_stack;
-    return const_iter;
+template <typename DataType, typename Comparator>
+template <typename IteratorDataType>
+template <typename OtherIteratorDataType, typename>
+BinaryTreeRecursive<DataType, Comparator>::BasicIterator<IteratorDataType>&
+BinaryTreeRecursive<DataType, Comparator>::BasicIterator<IteratorDataType>::operator=(
+    const BasicIterator<OtherIteratorDataType>& other) {
+    ptr_stack = other.ptr_stack;
+    return *this;
 }
 
-template <class DataType, class Comparator>
-template <class IteratorDataType>
+template <typename DataType, typename Comparator>
+template <typename IteratorDataType>
+BinaryTreeRecursive<DataType, Comparator>::BasicIterator<IteratorDataType>&
+BinaryTreeRecursive<DataType, Comparator>::BasicIterator<IteratorDataType>::operator=(BasicIterator&& other) {
+    ptr_stack = std::move(other.ptr_stack);
+    return *this;
+}
+
+template <typename DataType, typename Comparator>
+template <typename IteratorDataType>
+template <typename OtherIteratorDataType, typename>
+BinaryTreeRecursive<DataType, Comparator>::BasicIterator<IteratorDataType>&
+BinaryTreeRecursive<DataType, Comparator>::BasicIterator<IteratorDataType>::operator=(
+    BasicIterator<OtherIteratorDataType>&& other) {
+    ptr_stack = std::move(other.ptr_stack);
+    return *this;
+}
+
+template <typename DataType, typename Comparator>
+template <typename IteratorDataType>
 const IteratorDataType&
 BinaryTreeRecursive<DataType, Comparator>::BasicIterator<IteratorDataType>::operator*() noexcept {
     return ptr_stack.top()->val;
 }
 
-template <class DataType, class Comparator>
-template <class IteratorDataType>
+template <typename DataType, typename Comparator>
+template <typename IteratorDataType>
 const IteratorDataType*
 BinaryTreeRecursive<DataType, Comparator>::BasicIterator<IteratorDataType>::operator->() noexcept {
     return &(ptr_stack.top()->val);
 }
 
-template <class DataType, class Comparator>
-template <class IteratorDataType>
+template <typename DataType, typename Comparator>
+template <typename IteratorDataType>
 BinaryTreeRecursive<DataType, Comparator>::BasicIterator<IteratorDataType>&
 BinaryTreeRecursive<DataType, Comparator>::BasicIterator<IteratorDataType>::operator++() {
     Node* cur_node {ptr_stack.top()};
@@ -394,8 +423,8 @@ BinaryTreeRecursive<DataType, Comparator>::BasicIterator<IteratorDataType>::oper
     return *this;
 }
 
-template <class DataType, class Comparator>
-template <class IteratorDataType>
+template <typename DataType, typename Comparator>
+template <typename IteratorDataType>
 BinaryTreeRecursive<DataType, Comparator>::BasicIterator<IteratorDataType>
 BinaryTreeRecursive<DataType, Comparator>::BasicIterator<IteratorDataType>::operator++(int) {
     BasicIterator cur_iter {*this};
@@ -411,39 +440,39 @@ BinaryTreeRecursive<DataType, Comparator>::BasicIterator<IteratorDataType>::oper
     return cur_iter;
 }
 
-template <class DataType, class Comparator>
-template <class IteratorDataType>
+template <typename DataType, typename Comparator>
+template <typename IteratorDataType>
 bool BinaryTreeRecursive<DataType, Comparator>::BasicIterator<IteratorDataType>::operator==(
     const BasicIterator<MutableIteratorDataType>& other) const noexcept {
     return (ptr_stack.size() == other.ptr_stack.size()) &&
            (!ptr_stack.size() || ptr_stack.top() == other.ptr_stack.top());
 }
 
-template <class DataType, class Comparator>
-template <class IteratorDataType>
+template <typename DataType, typename Comparator>
+template <typename IteratorDataType>
 bool BinaryTreeRecursive<DataType, Comparator>::BasicIterator<IteratorDataType>::operator==(
     const BasicIterator<ConstIteratorDataType>& other) const noexcept {
     return (ptr_stack.size() == other.ptr_stack.size()) &&
            (!ptr_stack.size() || ptr_stack.top() == other.ptr_stack.top());
 }
 
-template <class DataType, class Comparator>
-template <class IteratorDataType>
+template <typename DataType, typename Comparator>
+template <typename IteratorDataType>
 bool BinaryTreeRecursive<DataType, Comparator>::BasicIterator<IteratorDataType>::operator!=(
     const BasicIterator<MutableIteratorDataType>& other) const noexcept {
     return (ptr_stack.size() != other.ptr_stack.size()) ||
            (!ptr_stack.empty() && ptr_stack.top() != other.ptr_stack.top());
 }
 
-template <class DataType, class Comparator>
-template <class IteratorDataType>
+template <typename DataType, typename Comparator>
+template <typename IteratorDataType>
 bool BinaryTreeRecursive<DataType, Comparator>::BasicIterator<IteratorDataType>::operator!=(
     const BasicIterator<ConstIteratorDataType>& other) const noexcept {
     return (ptr_stack.size() != other.ptr_stack.size()) ||
            (!ptr_stack.empty() && ptr_stack.top() != other.ptr_stack.top());
 }
 
-template <class DataType, class Comparator>
+template <typename DataType, typename Comparator>
 BinaryTreeRecursive<DataType, Comparator>::Node*
 BinaryTreeRecursive<DataType, Comparator>::_copyTree(Node* source_node) {
     if (!source_node)
@@ -456,7 +485,7 @@ BinaryTreeRecursive<DataType, Comparator>::_copyTree(Node* source_node) {
     return dest_node;
 }
 
-template <class DataType, class Comparator>
+template <typename DataType, typename Comparator>
 void BinaryTreeRecursive<DataType, Comparator>::_deleteTree(Node* cur_node) noexcept {
     if (!cur_node)
         return;
@@ -465,17 +494,17 @@ void BinaryTreeRecursive<DataType, Comparator>::_deleteTree(Node* cur_node) noex
     delete cur_node;
 }
 
-template <class DataType, class Comparator>
+template <typename DataType, typename Comparator>
 std::size_t BinaryTreeRecursive<DataType, Comparator>::size() const noexcept {
     return _size;
 }
 
-template <class DataType, class Comparator>
+template <typename DataType, typename Comparator>
 bool BinaryTreeRecursive<DataType, Comparator>::empty() const noexcept {
     return _size == 0;
 }
 
-template <class DataType, class Comparator>
+template <typename DataType, typename Comparator>
 BinaryTreeRecursive<DataType, Comparator>::Node*
 BinaryTreeRecursive<DataType, Comparator>::_insert(Node* cur_node, const DataType& val) {
     if (!cur_node) {
@@ -491,12 +520,12 @@ BinaryTreeRecursive<DataType, Comparator>::_insert(Node* cur_node, const DataTyp
     return cur_node;
 }
 
-template <class DataType, class Comparator>
+template <typename DataType, typename Comparator>
 void BinaryTreeRecursive<DataType, Comparator>::insert(const DataType& val) {
     _root = _insert(_root, val);
 }
 
-template <class DataType, class Comparator>
+template <typename DataType, typename Comparator>
 BinaryTreeRecursive<DataType, Comparator>::Node* BinaryTreeRecursive<DataType, Comparator>::_insert(Node* cur_node,
                                                                                                     DataType&& val) {
     if (!cur_node) {
@@ -512,12 +541,12 @@ BinaryTreeRecursive<DataType, Comparator>::Node* BinaryTreeRecursive<DataType, C
     return cur_node;
 }
 
-template <class DataType, class Comparator>
+template <typename DataType, typename Comparator>
 void BinaryTreeRecursive<DataType, Comparator>::insert(DataType&& val) {
     _root = _insert(_root, std::move(val));
 }
 
-template <class DataType, class Comparator>
+template <typename DataType, typename Comparator>
 BinaryTreeRecursive<DataType, Comparator>::Node*
 BinaryTreeRecursive<DataType, Comparator>::_getLeftestNode(Node* node) const {
     if (!node) [[unlikely]]
@@ -532,14 +561,14 @@ BinaryTreeRecursive<DataType, Comparator>::_getLeftestNode(Node* node) const {
     return node;
 }
 
-template <class DataType, class Comparator>
+template <typename DataType, typename Comparator>
 std::size_t BinaryTreeRecursive<DataType, Comparator>::erase(const DataType& val) {
     std::size_t size_before_erase {_size};
     _root = _erase(_root, val);
     return size_before_erase - _size;
 }
 
-template <class DataType, class Comparator>
+template <typename DataType, typename Comparator>
 BinaryTreeRecursive<DataType, Comparator>::iterator BinaryTreeRecursive<DataType, Comparator>::erase(iterator it) {
     Node* node2delete {it.ptr_stack.top()};
     BasicIterator new_it {it};
@@ -549,24 +578,24 @@ BinaryTreeRecursive<DataType, Comparator>::iterator BinaryTreeRecursive<DataType
     return new_it;
 }
 
-template <class DataType, class Comparator>
+template <typename DataType, typename Comparator>
 BinaryTreeRecursive<DataType, Comparator>::iterator
 BinaryTreeRecursive<DataType, Comparator>::find(const DataType& val) noexcept {
     return iterator(_find(_root, val));
 }
 
-template <class DataType, class Comparator>
+template <typename DataType, typename Comparator>
 BinaryTreeRecursive<DataType, Comparator>::const_iterator
 BinaryTreeRecursive<DataType, Comparator>::find(const DataType& val) const noexcept {
     return const_iterator(_find(_root, val));
 }
 
-template <class DataType, class Comparator>
+template <typename DataType, typename Comparator>
 bool BinaryTreeRecursive<DataType, Comparator>::contains(const DataType& val) const noexcept {
     return _find(_root, val) != nullptr;
 }
 
-template <class DataType, class Comparator>
+template <typename DataType, typename Comparator>
 BinaryTreeRecursive<DataType, Comparator>::Node*
 BinaryTreeRecursive<DataType, Comparator>::_erase(Node* cur_node, const DataType& val) {
     if (!cur_node)
@@ -606,7 +635,7 @@ BinaryTreeRecursive<DataType, Comparator>::_erase(Node* cur_node, const DataType
     return cur_node;
 }
 
-template <class DataType, class Comparator>
+template <typename DataType, typename Comparator>
 BinaryTreeRecursive<DataType, Comparator>::Node* BinaryTreeRecursive<DataType, Comparator>::_erase(Node* cur_node,
                                                                                                    Node* node2delete) {
     if (!cur_node)
@@ -655,7 +684,7 @@ BinaryTreeRecursive<DataType, Comparator>::Node* BinaryTreeRecursive<DataType, C
     return cur_node;
 }
 
-template <class DataType, class Comparator>
+template <typename DataType, typename Comparator>
 BinaryTreeRecursive<DataType, Comparator>::Node*
 BinaryTreeRecursive<DataType, Comparator>::_find(Node* cur_node, const DataType& val) const noexcept {
     if (!cur_node)
@@ -667,7 +696,7 @@ BinaryTreeRecursive<DataType, Comparator>::_find(Node* cur_node, const DataType&
     return _find(cur_node->right, val);
 }
 
-template <class DataType, class Comparator>
+template <typename DataType, typename Comparator>
 void BinaryTreeRecursive<DataType, Comparator>::_replaceChild(Node* parent, Node* old_child, Node* new_child) noexcept {
     if (parent->left == old_child)
         parent->left = new_child;
@@ -675,7 +704,7 @@ void BinaryTreeRecursive<DataType, Comparator>::_replaceChild(Node* parent, Node
         parent->right = new_child;
 }
 
-template <class DataType, class Comparator>
+template <typename DataType, typename Comparator>
 void BinaryTreeRecursive<DataType, Comparator>::_toVector(Node* cur_node, std::size_t& cur_index,
                                                           std::vector<DataType>& res) const {
     if (!cur_node)

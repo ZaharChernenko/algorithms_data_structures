@@ -79,6 +79,13 @@ void binary_tree_recursive_test() {
         std_t.erase(i);
     cout << "Время библиотечного дерева: "
          << std::chrono::duration<double, std::milli>(std::chrono::steady_clock::now() - start).count() << '\n';
+
+    // не работает, потому что нет шаблонов для разных BinaryTreeRecursive
+    // BinaryTreeRecursive<int>::iterator it {BinaryTreeRecursive<double>::iterator()};
+    my_t = {1, 2, 3};
+    BinaryTreeRecursive<int>::iterator it {my_t.begin()};
+    BinaryTreeRecursive<int>::const_iterator cit {my_t.cbegin()};
+    cit = std::move(it);
 }
 
 template <typename Iterator>

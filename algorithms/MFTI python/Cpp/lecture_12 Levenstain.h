@@ -41,7 +41,7 @@ std::size_t prefixFunc(const std::string& str) {
     std::vector<std::size_t> prefix_arr(str.size(), 0);
     // длина предыдущего префикса
     std::size_t prev_prefix_size;
-    for (std::size_t i {0}; i != prefix_arr.size(); ++i) {
+    for (std::size_t i {1}; i != prefix_arr.size(); ++i) {
         prev_prefix_size = prefix_arr[i - 1];
 
         // prev_prefix_size всегда указывает на следующий элемент, поэтому если он равен,
@@ -49,6 +49,8 @@ std::size_t prefixFunc(const std::string& str) {
         while (prev_prefix_size != 0 && str[prev_prefix_size] != str[i])
             // префикс предыдущей строки нам не подходит, однако если мы возьмем префикс от префикса
             // то он также будет и суффиксом, тогда можно попробовать сравнить его
+            // prev_prefix_size указывает на длину префикса, тогда prev_prefix_size - 1 будет
+            // указывать на префикс от него
             prev_prefix_size = prefix_arr[prev_prefix_size - 1];
 
         if (str[prev_prefix_size] == str[i])

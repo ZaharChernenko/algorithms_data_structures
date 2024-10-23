@@ -107,13 +107,15 @@ class BinaryTreeRecursive {
         BasicIterator(BasicIterator<OtherIteratorDataType>&& other);
 
         BasicIterator& operator=(const BasicIterator& other);
-        template <typename OtherIteratorDataType,
-                  typename = typename std::enable_if<!std::is_const<OtherIteratorDataType>::value>::type>
-        BasicIterator& operator=(const BasicIterator<OtherIteratorDataType>& other);
         BasicIterator& operator=(BasicIterator&& other);
-        template <typename OtherIteratorDataType,
-                  typename = typename std::enable_if<!std::is_const<OtherIteratorDataType>::value>::type>
-        BasicIterator& operator=(BasicIterator<OtherIteratorDataType>&& other);
+
+        template <typename OtherIteratorDataType>
+        typename std::enable_if<!std::is_const<OtherIteratorDataType>::value, BasicIterator>::type&
+        operator=(const BasicIterator<OtherIteratorDataType>& other);
+
+        template <typename OtherIteratorDataType>
+        typename std::enable_if<!std::is_const<OtherIteratorDataType>::value, BasicIterator>::type&
+        operator=(BasicIterator<OtherIteratorDataType>&& other);
         /*
           Если класс не шаблонный, то оператор приведения к своему же типу нельзя сделать, однако для шаблонных
           классов такое возможно, что позволяет приводить тип с одним параметром в тип с другим параметром. В этом коде
@@ -367,16 +369,6 @@ BinaryTreeRecursive<DataType, Comparator>::BasicIterator<IteratorDataType>::oper
 
 template <typename DataType, typename Comparator>
 template <typename IteratorDataType>
-template <typename OtherIteratorDataType, typename>
-BinaryTreeRecursive<DataType, Comparator>::BasicIterator<IteratorDataType>&
-BinaryTreeRecursive<DataType, Comparator>::BasicIterator<IteratorDataType>::operator=(
-    const BasicIterator<OtherIteratorDataType>& other) {
-    ptr_stack = other.ptr_stack;
-    return *this;
-}
-
-template <typename DataType, typename Comparator>
-template <typename IteratorDataType>
 BinaryTreeRecursive<DataType, Comparator>::BasicIterator<IteratorDataType>&
 BinaryTreeRecursive<DataType, Comparator>::BasicIterator<IteratorDataType>::operator=(BasicIterator&& other) {
     ptr_stack = std::move(other.ptr_stack);
@@ -385,8 +377,23 @@ BinaryTreeRecursive<DataType, Comparator>::BasicIterator<IteratorDataType>::oper
 
 template <typename DataType, typename Comparator>
 template <typename IteratorDataType>
-template <typename OtherIteratorDataType, typename>
-BinaryTreeRecursive<DataType, Comparator>::BasicIterator<IteratorDataType>&
+template <typename OtherIteratorDataType>
+typename std::enable_if<
+    !std::is_const<OtherIteratorDataType>::value,
+    typename BinaryTreeRecursive<DataType, Comparator>::template BasicIterator<IteratorDataType>>::type&
+BinaryTreeRecursive<DataType, Comparator>::BasicIterator<IteratorDataType>::operator=(
+    const BasicIterator<OtherIteratorDataType>& other) {
+    ptr_stack = other.ptr_stack;
+    return *this;
+}
+
+template <typename DataType, typename Comparator>
+template <typename IteratorDataType>
+template <typename OtherIteratorDataType>
+// template ниже нужен, чтобы BasicIterator воспринимался, как шаблон
+typename std::enable_if<
+    !std::is_const<OtherIteratorDataType>::value,
+    typename BinaryTreeRecursive<DataType, Comparator>::template BasicIterator<IteratorDataType>>::type&
 BinaryTreeRecursive<DataType, Comparator>::BasicIterator<IteratorDataType>::operator=(
     BasicIterator<OtherIteratorDataType>&& other) {
     ptr_stack = std::move(other.ptr_stack);

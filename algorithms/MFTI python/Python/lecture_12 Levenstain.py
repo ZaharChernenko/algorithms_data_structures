@@ -25,6 +25,3 @@ def prefixFunc(s: str) -> int:
         prefix_arr[i] = prev_prefix
 
     return prefix_arr[-1]
-
-
-print(prefixFunc("abacabab"))

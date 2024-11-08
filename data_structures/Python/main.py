@@ -50,7 +50,6 @@ def bestOfTotal(func, repeat: int, loops: int, *args, **kwargs):
 # с globals не работает нижняя команда
 # python3 -m timeit "$(cat main.py)"
 
-
 q = MyQueue(1, 2, 3, 4, 5)
 q.insert(23, 6)
 q.insert(0, 0)

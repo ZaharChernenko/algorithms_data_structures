@@ -37,8 +37,6 @@ inline void siftDown(Container& container, std::size_t index, std::size_t size) 
 
 template <class Container, class Comparator>
 void heapify(Container& container) {
-    if (container.size() < 2) [[unlikely]]
-        return;
     std::size_t size {container.size()};
     // т.к. вершин, которые удалены от листьев n / 2, то начинаем с n / 2 - 1 индекса
     for (std::size_t i {size / 2 - 1}; i != std::numeric_limits<std::size_t>::max(); --i) {

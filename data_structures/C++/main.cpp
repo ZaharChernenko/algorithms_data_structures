@@ -4,7 +4,6 @@
 #include <forward_list>
 #include <iostream>
 #include <set>
-#include <vector>
 
 using std::cout;
 

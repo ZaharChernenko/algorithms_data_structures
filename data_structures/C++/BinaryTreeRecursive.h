@@ -624,8 +624,8 @@ BinaryTreeRecursive<DataType, Comparator>::_erase(Node* cur_node, const DataType
             std::swap(child, cur_node);
             cur_node->left = child->left;
             if (child->right != cur_node) {
+                _replaceChild(parent, cur_node, cur_node->right);
                 cur_node->right = child->right;
-                _replaceChild(parent, cur_node, nullptr);
             }
             delete child;
         } else {
@@ -671,9 +671,9 @@ BinaryTreeRecursive<DataType, Comparator>::Node* BinaryTreeRecursive<DataType, C
             // в случае, если изначально cur_node->right указывал на child, то нам не нужно переназначать right,
             // т.к. будет циклическая ссылка, а должно быть nullptr
             if (child->right != cur_node) {
-                cur_node->right = child->right;
                 // несмотря на то, что мы поменяли местами указатели, parent все еще указывает на текущий cur_node
-                _replaceChild(parent, cur_node, nullptr);
+                _replaceChild(parent, cur_node, cur_node->right);
+                cur_node->right = child->right;
             }
             delete child;
 

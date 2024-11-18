@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <cstddef>
+#include <cstdint>
 #include <initializer_list>
 #include <iterator>
 #include <ostream>
@@ -68,9 +69,11 @@ class BinaryTreeRecursive {
         Node(const DataType& val);
         Node(DataType&& val);
 
-        DataType val {};
         Node* left {nullptr};
         Node* right {nullptr};
+        DataType val {};
+        // высота - количество вершин от текущего узла до самого дальнего
+        int8_t height {1};
     };
 
     template <typename IteratorDataType>
@@ -168,6 +171,20 @@ class BinaryTreeRecursive {
     Node* _getLeftestNode(Node* cur_node) const;
     void _replaceChild(Node* parent, Node* old_child, Node* new_child) noexcept;
     void _toVector(Node* cur_node, std::size_t& cur_index, std::vector<DataType>& res) const;
+    int8_t _getNodeHeight(const Node* cur_node) const;
+    void _fixNodeHeight(Node* cur_node);
+    // поворот, использующийся в случае если у левого поддерева левое поддерево больше, чем все правое исходного
+    // (если равны), то тогда разница |1 + h(node->left->left) - h(node->right)| <= 1, где + 1 - сама левая вершина
+    // также называется малый правый поворот
+    Node* _LLRotate(Node* cur_node);
+    // малый левый поворот
+    Node* _RRRotate(Node* cur_node);
+    // поворот, использующийся, когда у левого поддерева, правое поддерево больше, чем все правое поддерево исходного
+    // дерева, также называется большой правый поворот
+    Node* _LRRotate(Node* cur_node);
+    Node* _RLRotate(Node* cur_node);
+    int8_t _getBalanceFactor(const Node* cur_node) const;
+    Node* _balance(Node* cur_node);
 
     Node* _root;
     std::size_t _size;
@@ -524,7 +541,7 @@ BinaryTreeRecursive<DataType, Comparator>::_insert(Node* cur_node, const DataTyp
     else if (val != cur_node->val)
         cur_node->right = _insert(cur_node->right, val);
 
-    return cur_node;
+    return _balance(cur_node);
 }
 
 template <typename DataType, typename Comparator>
@@ -545,7 +562,7 @@ BinaryTreeRecursive<DataType, Comparator>::Node* BinaryTreeRecursive<DataType, C
     else if (val != cur_node->val)
         cur_node->right = _insert(cur_node->right, std::move(val));
 
-    return cur_node;
+    return _balance(cur_node);
 }
 
 template <typename DataType, typename Comparator>
@@ -719,4 +736,75 @@ void BinaryTreeRecursive<DataType, Comparator>::_toVector(Node* cur_node, std::s
     _toVector(cur_node->left, cur_index, res);
     res[cur_index++] = cur_node->val;
     _toVector(cur_node->right, cur_index, res);
+}
+
+template <typename DataType, typename Comparator>
+int8_t BinaryTreeRecursive<DataType, Comparator>::_getNodeHeight(const Node* cur_node) const {
+    if (!cur_node)
+        return 0;
+    return cur_node->height;
+}
+
+template <typename DataType, typename Comparator>
+void BinaryTreeRecursive<DataType, Comparator>::_fixNodeHeight(Node* cur_node) {
+    cur_node->height = std::max(_getNodeHeight(cur_node->left), _getNodeHeight(cur_node->right)) + 1;
+}
+
+template <typename DataType, typename Comparator>
+BinaryTreeRecursive<DataType, Comparator>::Node* BinaryTreeRecursive<DataType, Comparator>::_LLRotate(Node* cur_node) {
+    Node* left {cur_node->left};
+    cur_node->left = left->right;
+    left->right = cur_node;
+    _fixNodeHeight(cur_node);
+    _fixNodeHeight(left);
+    return left;
+}
+
+template <typename DataType, typename Comparator>
+BinaryTreeRecursive<DataType, Comparator>::Node* BinaryTreeRecursive<DataType, Comparator>::_RRRotate(Node* cur_node) {
+    Node* right {cur_node->right};
+    cur_node->right = right->left;
+    right->left = cur_node;
+    _fixNodeHeight(cur_node);
+    _fixNodeHeight(right);
+    return right;
+}
+
+template <typename DataType, typename Comparator>
+BinaryTreeRecursive<DataType, Comparator>::Node* BinaryTreeRecursive<DataType, Comparator>::_LRRotate(Node* cur_node) {
+    cur_node->left = _RRRotate(cur_node->left);
+    return _LLRotate(cur_node);
+}
+
+template <typename DataType, typename Comparator>
+BinaryTreeRecursive<DataType, Comparator>::Node* BinaryTreeRecursive<DataType, Comparator>::_RLRotate(Node* cur_node) {
+    cur_node->right = _LLRotate(cur_node->right);
+    return _RRRotate(cur_node);
+}
+
+template <typename DataType, typename Comparator>
+int8_t BinaryTreeRecursive<DataType, Comparator>::_getBalanceFactor(const Node* cur_node) const {
+    return _getNodeHeight(cur_node->right) - _getNodeHeight(cur_node->left);
+}
+
+template <typename DataType, typename Comparator>
+BinaryTreeRecursive<DataType, Comparator>::Node* BinaryTreeRecursive<DataType, Comparator>::_balance(Node* cur_node) {
+    // после этого высота становится валидной, высота низлежащих узлов валидна еще перед их потомком,
+    // т.к. вызывалась раньше
+    _fixNodeHeight(cur_node);
+    int8_t balance_factor {_getBalanceFactor(cur_node)};
+
+    // перекос вправо
+    if (balance_factor == 2) {
+        // правое поддерево правого поддерева больше
+        if (_getBalanceFactor(cur_node->right) == 1)
+            return _RRRotate(cur_node);
+        return _RLRotate(cur_node);
+    } else if (balance_factor == -2) {
+        if (_getBalanceFactor(cur_node->left) == -1)
+            return _LLRotate(cur_node);
+        return _LRRotate(cur_node);
+    }
+
+    return cur_node;
 }

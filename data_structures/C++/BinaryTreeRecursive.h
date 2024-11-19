@@ -1,3 +1,4 @@
+// AVL-tree
 #pragma once
 
 #include <algorithm>
@@ -63,6 +64,8 @@ class BinaryTreeRecursive {
     iterator find(const DataType& val) noexcept;
     const_iterator find(const DataType& val) const noexcept;
     bool contains(const DataType& val) const noexcept;
+
+    void swap(BinaryTreeRecursive& other) noexcept;
 
   protected:
     struct Node {
@@ -169,7 +172,7 @@ class BinaryTreeRecursive {
     Node* _copyTree(Node* source_node);
     void _deleteTree(Node* cur_node) noexcept;
     Node* _getLeftestNode(Node* cur_node) const;
-    void _replaceChild(Node* parent, Node* old_child, Node* new_child) noexcept;
+    Node* _replaceToMin(Node* cur_node, Node*& node_to_replace);
     void _toVector(Node* cur_node, std::size_t& cur_index, std::vector<DataType>& res) const;
     int8_t _getNodeHeight(const Node* cur_node) const;
     void _fixNodeHeight(Node* cur_node);
@@ -586,6 +589,17 @@ BinaryTreeRecursive<DataType, Comparator>::_getLeftestNode(Node* node) const {
 }
 
 template <typename DataType, typename Comparator>
+BinaryTreeRecursive<DataType, Comparator>::Node*
+BinaryTreeRecursive<DataType, Comparator>::_replaceToMin(Node* cur_node, Node*& node_to_replace) {
+    if (!cur_node->left) {
+        node_to_replace = cur_node;
+        return cur_node->right;
+    }
+    cur_node->left = _replaceToMin(cur_node->left, node_to_replace);
+    return _balance(cur_node);
+}
+
+template <typename DataType, typename Comparator>
 std::size_t BinaryTreeRecursive<DataType, Comparator>::erase(const DataType& val) {
     std::size_t size_before_erase {_size};
     _root = _erase(_root, val);
@@ -620,6 +634,12 @@ bool BinaryTreeRecursive<DataType, Comparator>::contains(const DataType& val) co
 }
 
 template <typename DataType, typename Comparator>
+void BinaryTreeRecursive<DataType, Comparator>::swap(BinaryTreeRecursive& other) noexcept {
+    std::swap(_root, other._root);
+    std::swap(_size, other._size);
+}
+
+template <typename DataType, typename Comparator>
 BinaryTreeRecursive<DataType, Comparator>::Node*
 BinaryTreeRecursive<DataType, Comparator>::_erase(Node* cur_node, const DataType& val) {
     if (!cur_node)
@@ -630,33 +650,19 @@ BinaryTreeRecursive<DataType, Comparator>::_erase(Node* cur_node, const DataType
     else if (val != cur_node->val)
         cur_node->right = _erase(cur_node->right, val);
     else {
-        if (cur_node->left && cur_node->right) {
-            Node* parent {cur_node};
-            Node* child {cur_node->right};
-
-            while (child->left) {
-                parent = child;
-                child = child->left;
-            }
-            std::swap(child, cur_node);
-            cur_node->left = child->left;
-            if (child->right != cur_node) {
-                _replaceChild(parent, cur_node, cur_node->right);
-                cur_node->right = child->right;
-            }
-            delete child;
-        } else {
-            Node* temp {cur_node};
-            if (cur_node->left)
-                cur_node = cur_node->left;
-            else
-                cur_node = cur_node->right;
-            delete temp;
-        }
+        Node* left {cur_node->left};
+        Node* right {cur_node->right};
+        delete cur_node;
+        if (left && right) {
+            right = _replaceToMin(right, cur_node);
+            cur_node->left = left;
+            cur_node->right = right;
+        } else
+            cur_node = !left ? right : left;
         --_size;
     }
 
-    return cur_node;
+    return !cur_node ? cur_node : _balance(cur_node);
 }
 
 template <typename DataType, typename Comparator>
@@ -670,42 +676,19 @@ BinaryTreeRecursive<DataType, Comparator>::Node* BinaryTreeRecursive<DataType, C
     else if (node2delete->val != cur_node->val)
         cur_node->right = _erase(cur_node->right, node2delete);
     else {
-        if (cur_node->left && cur_node->right) {
-            Node* parent {cur_node};
-            // child - самое маленькое значение справа
-            Node* child {cur_node->right};
-
-            while (child->left) {
-                parent = child;
-                child = child->left;
-            }
-
-            // child и cur_node - сами по себе содержат адреса, и нам необходимо удалить адрес именно cur_node,
-            // поэтому мы достаем child и меняем местами адреса, на которые они указывают
-            std::swap(child, cur_node);
-            // теперь cur_node указывает на child, поэтому нам нужно забрать левый указатель
-            cur_node->left = child->left;
-            // в случае, если изначально cur_node->right указывал на child, то нам не нужно переназначать right,
-            // т.к. будет циклическая ссылка, а должно быть nullptr
-            if (child->right != cur_node) {
-                // несмотря на то, что мы поменяли местами указатели, parent все еще указывает на текущий cur_node
-                _replaceChild(parent, cur_node, cur_node->right);
-                cur_node->right = child->right;
-            }
-            delete child;
-
-        } else {
-            Node* temp {cur_node};
-            if (cur_node->left)
-                cur_node = cur_node->left;
-            else
-                cur_node = cur_node->right;
-            delete temp;
-        }
+        Node* left {cur_node->left};
+        Node* right {cur_node->right};
+        delete cur_node;
+        if (left && right) {
+            right = _replaceToMin(right, cur_node);
+            cur_node->left = left;
+            cur_node->right = right;
+        } else
+            cur_node = !left ? right : left;
         --_size;
     }
 
-    return cur_node;
+    return !cur_node ? cur_node : _balance(cur_node);
 }
 
 template <typename DataType, typename Comparator>
@@ -718,14 +701,6 @@ BinaryTreeRecursive<DataType, Comparator>::_find(Node* cur_node, const DataType&
     if (_comp(val, cur_node->val))
         return _find(cur_node->left, val);
     return _find(cur_node->right, val);
-}
-
-template <typename DataType, typename Comparator>
-void BinaryTreeRecursive<DataType, Comparator>::_replaceChild(Node* parent, Node* old_child, Node* new_child) noexcept {
-    if (parent->left == old_child)
-        parent->left = new_child;
-    else
-        parent->right = new_child;
 }
 
 template <typename DataType, typename Comparator>

@@ -73,8 +73,8 @@ class OptimalBSTWithMisses[T](OptimalBST):
         #                      / \/ \
         prefix_weights: list[int] = [misses_freq[0]] + key_freq
         for i in range(1, len(prefix_weights)):
-            prefix_weights[i] = prefix_weights[i - 1] + prefix_weights[i] + misses_freq[i]
-            # self.total_cost[i][j] - взвешенный путь дерева с [i, j) элементами
+            prefix_weights[i] += prefix_weights[i - 1] + misses_freq[i]
+        # self.total_cost[i][j] - взвешенный путь дерева с [i, j) элементами
         self.total_cost: list[list[int]] = [[0] * (self.n + 1) for _ in range(self.n + 1)]
         # номера корней оптимальных деревьев [i, j)
         self.root_index: list[list[int]] = [[-1] * (self.n + 1) for _ in range(self.n + 1)]

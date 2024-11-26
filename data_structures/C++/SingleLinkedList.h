@@ -117,9 +117,9 @@ class SingleLinkedList {
     [[nodiscard]] std::size_t size() const;
     [[nodiscard]] bool empty() const;
     [[nodiscard]] T& front(); // т.к. эту функцию можно использовать для записи, метод non-const
-    [[nodiscard]] T& front() const;
+    [[nodiscard]] const T& front() const;
     [[nodiscard]] T& back();
-    [[nodiscard]] T& back() const;
+    [[nodiscard]] const T& back() const;
 
     void push_front(const T& value);
     void push_front(T&& value);
@@ -421,7 +421,7 @@ T& SingleLinkedList<T>::front() {
 }
 
 template <class T>
-T& SingleLinkedList<T>::front() const {
+const T& SingleLinkedList<T>::front() const {
     if (_before_front->next == nullptr) [[unlikely]]
         throw std::out_of_range("Empty list");
     return _before_front->next->value;
@@ -435,7 +435,7 @@ T& SingleLinkedList<T>::back() {
 }
 
 template <class T>
-T& SingleLinkedList<T>::back() const {
+const T& SingleLinkedList<T>::back() const {
     if (_back == nullptr) [[unlikely]]
         throw std::out_of_range("Empty list");
     return _back->value;

@@ -38,7 +38,11 @@ inline void siftDown(Container& container, std::size_t index, std::size_t size) 
 template <class Container, class Comparator>
 void heapify(Container& container) {
     std::size_t size {container.size()};
-    // т.к. вершин, которые удалены от листьев n / 2, то начинаем с n / 2 - 1 индекса
+    // т.к. вершин, которые удалены от листьев либо n / 2, если n четное
+    // (на самом деле это значит, что одна из вершин имеет только одного ребенка),
+    // либо на единицу меньше, чем половина, когда n нечетное, так как деление на 2 целочисленное,
+    // оба случая предусмотрены, поэтому size / 2 точно указывает на текущее количество вершин с потомками
+    // тогда индекс первого НЕ листа size / 2 - 1
     for (std::size_t i {size / 2 - 1}; i != std::numeric_limits<std::size_t>::max(); --i) {
         siftDown<Container, Comparator>(container, i, size);
     }

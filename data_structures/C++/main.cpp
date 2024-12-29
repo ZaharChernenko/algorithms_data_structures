@@ -1,9 +1,12 @@
 #include "BinaryTreeRecursive.h"
+#include "SegmentTree.h"
 #include "SingleLinkedList.h"
 #include <chrono>
+#include <cstddef>
 #include <forward_list>
 #include <iostream>
 #include <set>
+#include <vector>
 
 using std::cout;
 
@@ -102,5 +105,6 @@ int main() {
     print_iterator_info(BinaryTreeRecursive<int>::iterator());
     single_linked_list_test();
     binary_tree_recursive_test();
+
     return 0;
 }

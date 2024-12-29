@@ -764,7 +764,7 @@ int8_t BinaryTreeRecursive<DataType, Comparator>::_getBalanceFactor(const Node* 
 
 template <typename DataType, typename Comparator>
 BinaryTreeRecursive<DataType, Comparator>::Node* BinaryTreeRecursive<DataType, Comparator>::_balance(Node* cur_node) {
-    // после этого высота становится валидной, высота низлежащих узлов валидна еще перед их потомком,
+    // после этого высота становится валидной, высота низлежащих узлов валидна еще перед их предком,
     // т.к. вызывалась раньше
     _fixNodeHeight(cur_node);
     int8_t balance_factor {_getBalanceFactor(cur_node)};

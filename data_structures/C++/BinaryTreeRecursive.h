@@ -187,6 +187,7 @@ class BinaryTreeRecursive {
     Node* _LRRotate(Node* cur_node);
     Node* _RLRotate(Node* cur_node);
     int8_t _getBalanceFactor(const Node* cur_node) const;
+    // после этого высота становится валидной, высота низлежащих узлов валидна еще перед их предком
     Node* _balance(Node* cur_node);
 
     Node* _root;
@@ -764,8 +765,7 @@ int8_t BinaryTreeRecursive<DataType, Comparator>::_getBalanceFactor(const Node* 
 
 template <typename DataType, typename Comparator>
 BinaryTreeRecursive<DataType, Comparator>::Node* BinaryTreeRecursive<DataType, Comparator>::_balance(Node* cur_node) {
-    // после этого высота становится валидной, высота низлежащих узлов валидна еще перед их потомком,
-    // т.к. вызывалась раньше
+    // без этого вызова ноды, у которых появился 1 лист не увеличат свою высоту, т.к. ни один поворот не будет вызван
     _fixNodeHeight(cur_node);
     int8_t balance_factor {_getBalanceFactor(cur_node)};
 
